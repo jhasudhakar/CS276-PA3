@@ -90,14 +90,14 @@ public class LoadHandler
      * Load IDF data from file.
      * @return
      */
-	public static Map<String, Double> loadIDFs()
+	public static IDF loadIDFs()
 	{
-        Map<String,Double> IDF;
+        IDF IDF;
 
         try {
             FileInputStream fis = new FileInputStream(Config.IDF_FILE);
             ObjectInputStream ois = new ObjectInputStream(fis);
-            IDF = (Map<String, Double>) ois.readObject();
+            IDF = (IDF) ois.readObject();
             ois.close();
             fis.close();
         }
@@ -109,7 +109,7 @@ public class LoadHandler
         return IDF;
 	}
 
-    public static void saveIDFs(Map<String, Double> IDF) {
+    public static void saveIDFs(IDF IDF) {
         try {
             FileOutputStream fos = new FileOutputStream(Config.IDF_FILE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -127,7 +127,7 @@ public class LoadHandler
      * @return
      * @throws IOException
      */
-	public static Map<String,Double> buildIDFs(String dataDir) throws IOException {
+	public static IDF buildIDFs(String dataDir) throws IOException {
 		
 		/* Get root directory */
 		String root = dataDir;
@@ -170,18 +170,19 @@ public class LoadHandler
         }
 
         System.out.println(totalDocCount);
-		
-		// compute IDFs
-        Map<String, Double> IDF = new HashMap<>();
-        for (Map.Entry<String, Integer> entry : termDocCount.entrySet()) {
-            IDF.put(entry.getKey(), 1.0 * totalDocCount / entry.getValue());
-        }
 
-        return IDF;
+        return new IDF(termDocCount, totalDocCount);
 	}
 
     public static void main(String[] args) throws IOException {
-        Map<String, Double> IDF = buildIDFs(args[0]);
+        IDF IDF = buildIDFs(args[0]);
+
+        // some tests
+        System.out.println("IDF(the) = " + IDF.getValue("the"));
+        System.out.println("IDF(stanford) = " + IDF.getValue("stanford"));
+        System.out.println("IDF(chris) = " + IDF.getValue("chris"));
+        System.out.println("IDF(xxxyyyy) = " + IDF.getValue("xxxyyyy"));
+
         saveIDFs(IDF);
     }
 }
