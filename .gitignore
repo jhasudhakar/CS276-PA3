@@ -17,6 +17,9 @@ tmp/
 cs276-pa3/bin
 cs276-pa3/classes
 
+# serialized objects
+*.ser
+
 report.aux
 report.log
 report.out

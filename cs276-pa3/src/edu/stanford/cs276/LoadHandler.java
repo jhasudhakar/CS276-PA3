@@ -1,27 +1,15 @@
 package edu.stanford.cs276;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import edu.stanford.cs276.util.MapUtility;
+
+import java.io.*;
+import java.util.*;
 
 public class LoadHandler 
 {
-	
-	public static Map<Query,Map<String, Document>> loadTrainData(String feature_file_name) throws Exception {
+	public static Map<Query, Map<String, Document>> loadTrainData(String feature_file_name) throws Exception {
 		File feature_file = new File(feature_file_name);
-		if (!feature_file.exists() ) {
+		if (!feature_file.exists()) {
 			System.err.println("Invalid feature file name: " + feature_file_name);
 			return null;
 		}
@@ -31,7 +19,7 @@ public class LoadHandler
 		Query query = null;
 		
 		/* feature dictionary: Query -> (url -> Document)  */
-		Map<Query,Map<String, Document>> queryDict =  new HashMap<Query,Map<String, Document>>();
+		Map<Query, Map<String, Document>> queryDict = new HashMap<Query,Map<String, Document>>();
 		
 		while ((line = reader.readLine()) != null) 
 		{
@@ -97,30 +85,49 @@ public class LoadHandler
 		
 		return queryDict;
 	}
-	
-	//unserializes from file
-	public static Map<String,Double> loadDFs(String idfFile)
+
+    /**
+     * Load IDF data from file.
+     * @return
+     */
+	public static Map<String, Double> loadIDFs()
 	{
-		  Map<String,Double> termDocCount = null;
-	      try
-	      {
-	         FileInputStream fis = new FileInputStream(idfFile);
-	         ObjectInputStream ois = new ObjectInputStream(fis);
-	         termDocCount = (HashMap<String,Double>) ois.readObject();
-	         ois.close();
-	         fis.close();
-	      }
-	      catch(IOException | ClassNotFoundException ioe)
-	      {
-	         ioe.printStackTrace();
-	         return null;
-	      }
-		return termDocCount;
+        Map<String,Double> IDF;
+
+        try {
+            FileInputStream fis = new FileInputStream(Config.IDF_FILE);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            IDF = (Map<String, Double>) ois.readObject();
+            ois.close();
+            fis.close();
+        }
+        catch(IOException | ClassNotFoundException ioe) {
+            ioe.printStackTrace();
+            return null;
+        }
+
+        return IDF;
 	}
-	
-	//builds and then serializes from file
-	public static Map<String,Double> buildDFs(String dataDir, String idfFile)
-	{
+
+    public static void saveIDFs(Map<String, Double> IDF) {
+        try {
+            FileOutputStream fos = new FileOutputStream(Config.IDF_FILE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(IDF);
+            oos.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Build IDF from training documents. The documents should be organized in a block fashion.
+     * @param dataDir the directory of all blocks
+     * @return
+     * @throws IOException
+     */
+	public static Map<String,Double> buildIDFs(String dataDir) throws IOException {
 		
 		/* Get root directory */
 		String root = dataDir;
@@ -134,40 +141,47 @@ public class LoadHandler
 
 		int totalDocCount = 0;
 		
-		//counts number of documents in which each term appears
-		Map<String,Double> termDocCount = new HashMap<String,Double>();
-		
-		/*
-		 * @//TODO : Your code here --consult pa1 (will be basically a simplified version)
-		 */
-		
-		System.out.println(totalDocCount);
-		
-		//make idf
-		for (String term : termDocCount.keySet())
-		{
-			/*
-			 * @//TODO : Your code here
-			 */
-		}
-		
-		
-		//saves to file
-        try
-        {
-			FileOutputStream fos = new FileOutputStream(idfFile);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(termDocCount);
-			oos.close();
-			fos.close();
+		// counts number of documents in which each term appears
+		Map<String, Integer> termDocCount = new HashMap<>();
+
+        for (File blockDir : dirlist) {
+            File[] docFiles = blockDir.listFiles();
+            for (File docFile : docFiles) {
+                // increment total document count
+                totalDocCount++;
+
+                BufferedReader reader = new BufferedReader(new FileReader(docFile));
+                // store terms in this document
+                Set<String> terms = new HashSet<>();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    terms.addAll(Arrays.asList(line.trim().split("\\s+")));
+                }
+
+                reader.close();
+
+                // increment document count for each term
+                for (String term : terms) {
+                    MapUtility.incrementCount(term, termDocCount);
+                }
+            }
+
+            System.out.println("Finished processing " + blockDir.getName());
         }
-        
-        catch(IOException ioe)
-        {
-        	ioe.printStackTrace();
-        }
+
+        System.out.println(totalDocCount);
 		
-        return termDocCount;
+		// compute IDFs
+        Map<String, Double> IDF = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : termDocCount.entrySet()) {
+            IDF.put(entry.getKey(), 1.0 * totalDocCount / entry.getValue());
+        }
+
+        return IDF;
 	}
 
+    public static void main(String[] args) throws IOException {
+        Map<String, Double> IDF = buildIDFs(args[0]);
+        saveIDFs(IDF);
+    }
 }
