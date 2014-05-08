@@ -1,14 +1,13 @@
 package edu.stanford.cs276;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Comparator;
+import edu.stanford.cs276.util.Pair;
 
-import util.Pair;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
 
 public class Rank 
 {
