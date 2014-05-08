@@ -11,6 +11,8 @@ import java.util.*;
 
 public class Rank 
 {
+    private static Set<String> validScoreTypes = new HashSet<>(Arrays.asList(
+            new String[]{"baseline", "cosine", "bm25", "extra", "window"}));
 
 	private static Map<Query,List<String>> score(Map<Query,Map<String, Document>> queryDict, String scoreType,
 			Map<String,Double> idfs)
@@ -130,18 +132,16 @@ public class Rank
 		 * @//TODO : Your code here to handle idfs
 		 */
 		
-		
 		if (args.length < 2) {
 			System.err.println("Insufficient number of arguments: <queryDocTrainData path> taskType");
+            return;
 		}
 
-		
 		String scoreType = args[1];
-		
-		if (!(scoreType.equals("baseline") || scoreType.equals("cosine") || scoreType.equals("bm25")
-				|| scoreType.equals("extra") || scoreType.equals("window")))
-		{
+
+        if (!validScoreTypes.contains(scoreType)) {
 			System.err.println("Invalid scoring type; should be either 'baseline', 'bm25', 'cosine', 'window', or 'extra'");
+            return;
 		}
 			
 		Map<Query,Map<String, Document>> queryDict=null;
