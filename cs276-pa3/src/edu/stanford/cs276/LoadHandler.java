@@ -29,16 +29,17 @@ public class LoadHandler
 			if (key.equals("query")) {
 				query = new Query(value);
 				queryDict.put(query, new HashMap<>());
-			} else if (key.equals("url"))  {
-				url = value;
+			} else if (key.equals("url")) {
+				url = value.trim().toLowerCase();
 				queryDict.get(query).put(url, new Document(url));
-			} else if (key.equals("title"))  {
-				queryDict.get(query).get(url).title = new String(value);
+			} else if (key.equals("title")) {
+				queryDict.get(query).get(url).title = value.trim();
 			} else if (key.equals("header")) {
-				if (queryDict.get(query).get(url).headers == null)
-					queryDict.get(query).get(url).headers =  new ArrayList<>();
-				queryDict.get(query).get(url).headers.add(value);
-			} else if (key.equals("bodyHits")) {
+				if (queryDict.get(query).get(url).headers == null) {
+                    queryDict.get(query).get(url).headers = new ArrayList<>();
+                }
+				queryDict.get(query).get(url).headers.add(value.trim());
+			} else if (key.equals("body_hits")) {
 				if (queryDict.get(query).get(url).bodyHits == null) {
                     queryDict.get(query).get(url).bodyHits = new HashMap<>();
                 }
@@ -58,12 +59,12 @@ public class LoadHandler
 				for (String position : positions) {
                     positions_int.add(Integer.parseInt(position));
                 }
-			} else if (key.equals("bodyLength")) {
+			} else if (key.equals("body_length")) {
                 queryDict.get(query).get(url).bodyLength = Integer.parseInt(value);
             } else if (key.equals("pagerank ")) {
                     queryDict.get(query).get(url).pageRank = Integer.parseInt(value);
             } else if (key.equals("anchor_text")) {
-				anchor_text = value;
+				anchor_text = value.trim();
 				if (queryDict.get(query).get(url).anchors == null) {
                     queryDict.get(query).get(url).anchors = new HashMap<>();
                 }
