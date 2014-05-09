@@ -1,11 +1,9 @@
 package edu.stanford.cs276;
 
-import java.util.Map;
-
 public class ExtraCreditScorer extends AScorer
 {
 
-	public ExtraCreditScorer(Map<String,Double> idfs)
+	public ExtraCreditScorer(IDF idfs)
 	{
 		super(idfs);
 	}

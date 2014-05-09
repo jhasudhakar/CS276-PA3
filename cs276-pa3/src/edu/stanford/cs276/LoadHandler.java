@@ -27,7 +27,7 @@ public class LoadHandler
 			String value = tokens[1].trim();
 
 			if (key.equals("query")) {
-				query = new Query(value);
+				query = new Query(value.trim().toLowerCase());
 				queryDict.put(query, new HashMap<>());
 			} else if (key.equals("url")) {
 				url = value.trim().toLowerCase();

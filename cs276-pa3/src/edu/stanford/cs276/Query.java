@@ -4,16 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Query
-{
-
-	List<String> queryWords;
+public class Query {
+    private String originalQuery;
+    private List<String> queryWords;
 	
-	public Query(String query)
-	{
-		queryWords = new ArrayList<String>(Arrays.asList(query.split(" ")));
+	public Query(String query) {
+        originalQuery = query;
+		queryWords = new ArrayList<>(Arrays.asList(query.split(" ")));
 	}
-	
-	
-	
+
+    public List<String> getQueryWords() {
+        return queryWords;
+    }
+
+    @Override
+    public int hashCode() {
+        return originalQuery.hashCode();
+    }
 }

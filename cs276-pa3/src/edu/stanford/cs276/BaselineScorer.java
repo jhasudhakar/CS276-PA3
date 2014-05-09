@@ -9,15 +9,15 @@ public class BaselineScorer extends AScorer
 		super(null);
 	}
 	
-	//We sum over the length of the body_hits array for all query terms
+	//We sum over the length of the bodyHits array for all query terms
 	@Override
 	public double getSimScore(Document d, Query q) 
 	{
 		double score = 0.0;
-		if (d.body_hits!=null)
+		if (d.bodyHits !=null)
 		{
-			for (String term : d.body_hits.keySet())
-				score += d.body_hits.get(term).size();
+			for (String term : d.bodyHits.keySet())
+				score += d.bodyHits.get(term).size();
 		}
 		
 		return score;

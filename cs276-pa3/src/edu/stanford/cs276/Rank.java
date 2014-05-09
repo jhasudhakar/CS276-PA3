@@ -15,7 +15,7 @@ public class Rank
             new String[]{"baseline", "cosine", "bm25", "extra", "window"}));
 
 	private static Map<Query,List<String>> score(Map<Query,Map<String, Document>> queryDict, String scoreType,
-			Map<String,Double> idfs)
+			IDF idfs)
 	{
 		AScorer scorer = null;
 		if (scoreType.equals("baseline"))
@@ -70,7 +70,7 @@ public class Rank
 		for (Query query : queryRankings.keySet())
 		{
 			StringBuilder queryBuilder = new StringBuilder();
-			for (String s : query.queryWords)
+			for (String s : query.getQueryWords())
 			{
 				queryBuilder.append(s);
 				queryBuilder.append(" ");
@@ -98,7 +98,7 @@ public class Rank
 			for (Query query : queryRankings.keySet())
 			{
 				StringBuilder queryBuilder = new StringBuilder();
-				for (String s : query.queryWords)
+				for (String s : query.getQueryWords())
 				{
 					queryBuilder.append(s);
 					queryBuilder.append(" ");
@@ -126,7 +126,7 @@ public class Rank
 	public static void main(String[] args) throws IOException 
 	{
 
-		Map<String,Double> idfs = null;
+		IDF idfs = null;
 		
 		/*
 		 * @//TODO : Your code here to handle idfs

@@ -1,15 +1,15 @@
 package edu.stanford.cs276;
 
-import java.util.ArrayList;
+import edu.stanford.cs276.doc.DocField;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BM25Scorer extends AScorer
 {
 	Map<Query,Map<String, Document>> queryDict;
 	
-	public BM25Scorer(Map<String,Double> idfs,Map<Query,Map<String, Document>> queryDict)
+	public BM25Scorer(IDF idfs,Map<Query,Map<String, Document>> queryDict)
 	{
 		super(idfs);
 		this.queryDict = queryDict;
@@ -56,19 +56,19 @@ public class BM25Scorer extends AScorer
 		 */
     	
     	//normalize avgLengths
-		for (String tfType : this.TFTYPES)
-		{
+		//for (String tfType : this.TF_TYPES)
+		//{
 			/*
 			 * @//TODO : Your code here
 			 */
-		}
+		//}
 
     }
     
     ////////////////////////////////////
     
     
-	public double getNetScore(Map<String,Map<String, Double>> tfs, Query q, Map<String,Double> tfQuery,Document d)
+	public double getNetScore(Map<DocField, Map<String, Double>> tfs, Query q, Map<String,Double> tfQuery,Document d)
 	{
 		double score = 0.0;
 		
@@ -80,7 +80,7 @@ public class BM25Scorer extends AScorer
 	}
 
 	//do bm25 normalization
-	public void normalizeTFs(Map<String,Map<String, Double>> tfs,Document d, Query q)
+	public void normalizeTFs(Map<DocField, Map<String, Double>> tfs,Document d, Query q)
 	{
 		/*
 		 * @//TODO : Your code here
@@ -92,7 +92,7 @@ public class BM25Scorer extends AScorer
 	public double getSimScore(Document d, Query q) 
 	{
 		
-		Map<String,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
+		Map<DocField,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
 		
 		this.normalizeTFs(tfs, d, q);
 		

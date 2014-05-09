@@ -1,8 +1,7 @@
 package edu.stanford.cs276;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import edu.stanford.cs276.doc.DocField;
+
 import java.util.Map;
 
 //doesn't necessarily have to use task 2 (could use task 1, in which case, you'd probably like to extend CosineSimilarityScorer instead)
@@ -15,7 +14,7 @@ public class SmallestWindowScorer extends BM25Scorer
     
     //////////////////////////////
 	
-	public SmallestWindowScorer(Map<String, Double> idfs,Map<Query,Map<String, Document>> queryDict) 
+	public SmallestWindowScorer(IDF idfs,Map<Query,Map<String, Document>> queryDict)
 	{
 		super(idfs, queryDict);
 		handleSmallestWindow();
@@ -41,7 +40,7 @@ public class SmallestWindowScorer extends BM25Scorer
 	
 	@Override
 	public double getSimScore(Document d, Query q) {
-		Map<String,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
+		Map<DocField,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
 		
 		this.normalizeTFs(tfs, d, q);
 		
