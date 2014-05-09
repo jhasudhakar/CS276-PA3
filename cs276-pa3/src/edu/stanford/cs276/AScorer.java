@@ -41,8 +41,7 @@ public abstract class AScorer
      * @param q
      * @return
      */
-	public Map<DocField, Map<String, Double>> getDocTermFreqs(Document d, Query q)
-	{
+	public Map<DocField, Map<String, Double>> getDocTermFreqs(Document d, Query q) {
 		// map from tf type -> queryWord -> score
 		Map<DocField, Map<String, Double>> tfs = new HashMap<>();
 
@@ -52,4 +51,21 @@ public abstract class AScorer
 
         return tfs;
 	}
+
+    /**
+     * Compute dot product of two sparse vectors.
+     * As qv size is usually smaller than dv, the order matters.
+     * @param qv the query vector
+     * @param dv the document vector
+     * @return
+     */
+    public double dotProduct(Map<String, Double> qv, Map<String, Double> dv) {
+        double result = 0.0;
+
+        for (Map.Entry<String, Double> ev : qv.entrySet()) {
+            result += ev.getValue() * MapUtility.getWithFallback(dv, ev.getKey(), 0.0);
+        }
+
+        return result;
+    }
 }

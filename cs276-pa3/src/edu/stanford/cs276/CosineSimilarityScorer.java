@@ -3,24 +3,26 @@ package edu.stanford.cs276;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.util.MapUtility;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CosineSimilarityScorer extends AScorer
 {
-    private static double EXT_BODY_LENGTH = 500;
-	public CosineSimilarityScorer(IDF idfs)
-	{
-		super(idfs);
-	}
-	
-	///////////////weights///////////////////////////
-    double urlweight = -1;
-    double titleweight  = -1;
-    double bodyweight = -1;
-    double headerweight = -1;
-    double anchorweight = -1;
-    
-    double smoothingBodyLength = -1;
+    private static double SMOOTH_BODY_LENGTH = 500;
+    private static Map<DocField, Double> fieldWeights;
+
+    static {
+        fieldWeights = new HashMap<>();
+        fieldWeights.put(DocField.url, 1.0);
+        fieldWeights.put(DocField.title, 1.0);
+        fieldWeights.put(DocField.header, 1.0);
+        fieldWeights.put(DocField.body, 1.0);
+        fieldWeights.put(DocField.anchor, 1.0);
+    }
+
+    public CosineSimilarityScorer(IDF idfs) {
+        super(idfs);
+    }
 
     /**
      * Normalize by body length.
@@ -30,7 +32,7 @@ public class CosineSimilarityScorer extends AScorer
      * @return
      */
     private Map<String, Double> lengthNormalize(Map<String, Double> termFreqs, Document d, Query q) {
-        double smoothedBodyLength = d.bodyLength + EXT_BODY_LENGTH;
+        double smoothedBodyLength = d.bodyLength + SMOOTH_BODY_LENGTH;
 
         for (Map.Entry<String, Double> e : termFreqs.entrySet()) {
             termFreqs.put(e.getKey(), e.getValue() / smoothedBodyLength);
@@ -47,12 +49,12 @@ public class CosineSimilarityScorer extends AScorer
                               Map<String, Double> tfQuery, Document d)
 	{
 		double score = 0.0;
-		
-		/*
-		 * @//TODO : Your code here
-		 */
-		
-		return score;
+
+        for (DocField docField : DocField.values()) {
+            score += dotProduct(tfQuery, tfs.get(docField));
+        }
+
+        return score;
 	}
 
 	

@@ -126,7 +126,7 @@ public class Rank
 	public static void main(String[] args) throws IOException 
 	{
 
-		IDF idfs = null;
+		IDF idfs = LoadHandler.loadIDFs();
 		
 		/*
 		 * @//TODO : Your code here to handle idfs
