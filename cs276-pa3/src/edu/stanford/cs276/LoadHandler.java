@@ -19,66 +19,57 @@ public class LoadHandler
 		Query query = null;
 		
 		/* feature dictionary: Query -> (url -> Document)  */
-		Map<Query, Map<String, Document>> queryDict = new HashMap<Query,Map<String, Document>>();
+		Map<Query, Map<String, Document>> queryDict = new HashMap<>();
 		
-		while ((line = reader.readLine()) != null) 
-		{
+		while ((line = reader.readLine()) != null) {
 			String[] tokens = line.split(":", 2);
 			String key = tokens[0].trim();
 			String value = tokens[1].trim();
 
-			if (key.equals("query"))
-			{
+			if (key.equals("query")) {
 				query = new Query(value);
-				queryDict.put(query, new HashMap<String, Document>());
-			} 
-			else if (key.equals("url")) 
-			{
+				queryDict.put(query, new HashMap<>());
+			} else if (key.equals("url"))  {
 				url = value;
 				queryDict.get(query).put(url, new Document(url));
-			} 
-			else if (key.equals("title")) 
-			{
+			} else if (key.equals("title"))  {
 				queryDict.get(query).get(url).title = new String(value);
-			}
-			else if (key.equals("header"))
-			{
+			} else if (key.equals("header")) {
 				if (queryDict.get(query).get(url).headers == null)
-					queryDict.get(query).get(url).headers =  new ArrayList<String>();
+					queryDict.get(query).get(url).headers =  new ArrayList<>();
 				queryDict.get(query).get(url).headers.add(value);
-			}
-			else if (key.equals("body_hits")) 
-			{
-				if (queryDict.get(query).get(url).body_hits == null)
-					queryDict.get(query).get(url).body_hits = new HashMap<String, List<Integer>>();
+			} else if (key.equals("bodyHits")) {
+				if (queryDict.get(query).get(url).bodyHits == null) {
+                    queryDict.get(query).get(url).bodyHits = new HashMap<>();
+                }
+
 				String[] temp = value.split(" ", 2);
 				String term = temp[0].trim();
 				List<Integer> positions_int;
 				
-				if (!queryDict.get(query).get(url).body_hits.containsKey(term))
-				{
-					positions_int = new ArrayList<Integer>();
-					queryDict.get(query).get(url).body_hits.put(term, positions_int);
-				} else
-					positions_int = queryDict.get(query).get(url).body_hits.get(term);
+				if (!queryDict.get(query).get(url).bodyHits.containsKey(term)) {
+					positions_int = new ArrayList<>();
+					queryDict.get(query).get(url).bodyHits.put(term, positions_int);
+				} else {
+                    positions_int = queryDict.get(query).get(url).bodyHits.get(term);
+                }
 				
 				String[] positions = temp[1].trim().split(" ");
-				for (String position : positions)
-					positions_int.add(Integer.parseInt(position));
-				
-			} 
-			else if (key.equals("body_length"))
-				queryDict.get(query).get(url).body_length = Integer.parseInt(value);
-			else if (key.equals("pagerank"))
-				queryDict.get(query).get(url).page_rank = Integer.parseInt(value);
-			else if (key.equals("anchor_text"))
-			{
+				for (String position : positions) {
+                    positions_int.add(Integer.parseInt(position));
+                }
+			} else if (key.equals("bodyLength")) {
+                queryDict.get(query).get(url).bodyLength = Integer.parseInt(value);
+            } else if (key.equals("pagerank ")) {
+                    queryDict.get(query).get(url).pageRank = Integer.parseInt(value);
+            } else if (key.equals("anchor_text")) {
 				anchor_text = value;
-				if (queryDict.get(query).get(url).anchors == null)
-					queryDict.get(query).get(url).anchors = new HashMap<String, Integer>();
-			}
-			else if (key.equals("stanford_anchor_count"))
-				queryDict.get(query).get(url).anchors.put(anchor_text, Integer.parseInt(value));      
+				if (queryDict.get(query).get(url).anchors == null) {
+                    queryDict.get(query).get(url).anchors = new HashMap<>();
+                }
+			} else if (key.equals("stanford_anchor_count")) {
+                queryDict.get(query).get(url).anchors.put(anchor_text, Integer.parseInt(value));
+            }
 		}
 
 		reader.close();
