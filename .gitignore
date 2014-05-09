@@ -3,7 +3,7 @@
 
 out/
 output/
-pa3.pdf
+*.pdf
 
 .*.sw[p-z]
 .DS_Store
@@ -13,7 +13,8 @@ pa3.pdf
 
 tmp/
 
-/data/
+data/
+2013.data/
 cs276-pa3/bin
 cs276-pa3/classes
 
@@ -23,4 +24,3 @@ cs276-pa3/classes
 report.aux
 report.log
 report.out
-report.pdf
