@@ -12,6 +12,10 @@ import java.util.Map;
 public class TitleTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
+        if (d.title == null) {
+            return EMPTY;
+        }
+
         List<String> titleWords = tokenize(d.title.toLowerCase(), "\\s+");
         return termFreqsFromField(titleWords, q);
     }

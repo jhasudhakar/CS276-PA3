@@ -13,6 +13,10 @@ import java.util.Map;
 public class AnchorTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
+        if (d.anchors == null) {
+            return EMPTY;
+        }
+
         List<String> anchorWords = new ArrayList<>();
 
         for (String anchorText : d.anchors.keySet()) {

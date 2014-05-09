@@ -13,6 +13,10 @@ import java.util.Map;
 public class HeaderTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
+        if (d.headers == null) {
+            return EMPTY;
+        }
+
         List<String> headerWords = new ArrayList<>();
 
         for (String header : d.headers) {
