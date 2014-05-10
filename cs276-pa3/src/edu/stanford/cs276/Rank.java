@@ -7,99 +7,93 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
-public class Rank 
-{
+public class Rank  {
     private static Set<String> validScoreTypes = new HashSet<>(Arrays.asList(
             new String[]{"baseline", "cosine", "bm25", "extra", "window"}));
 
-	private static Map<Query,List<String>> score(Map<Query,Map<String, Document>> queryDict, String scoreType,
-			IDF idfs)
-	{
+	private static Map<Query, List<String>> score(Map<Query, Map<String, Document>> queryDict,
+                                                  String scoreType, IDF idfs) {
 		AScorer scorer = null;
-		if (scoreType.equals("baseline"))
-			scorer = new BaselineScorer();
-		else if (scoreType.equals("cosine"))
-			scorer = new CosineSimilarityScorer(idfs);
-		else if (scoreType.equals("bm25"))
-			scorer = new BM25Scorer(idfs,queryDict);
-		else if (scoreType.equals("window"))
-			//feel free to change this to match your cosine scorer if you choose to build on top of that instead
-			scorer = new SmallestWindowScorer(idfs,queryDict);
-		else if (scoreType.equals("extra"))
-			scorer = new ExtraCreditScorer(idfs);
+
+		if (scoreType.equals("baseline")) {
+            scorer = new BaselineScorer();
+        } else if (scoreType.equals("cosine")) {
+            scorer = new CosineSimilarityScorer(idfs);
+        } else if (scoreType.equals("bm25")) {
+            scorer = new BM25Scorer(idfs, queryDict);
+        } else if (scoreType.equals("window")) {
+            //feel free to change this to match your cosine scorer if you choose to build on top of that instead
+            scorer = new SmallestWindowScorer(idfs, queryDict);
+        } else if (scoreType.equals("extra")) {
+            scorer = new ExtraCreditScorer(idfs);
+        }
+
+		// put completed rankings here
+		Map<Query, List<String>> queryRankings = new HashMap<>();
 		
-		
-		//put completed rankings here
-		Map<Query,List<String>> queryRankings = new HashMap<Query,List<String>>();
-		
-		for (Query query : queryDict.keySet())
-		{
-			//loop through urls for query, getting scores
-			List<Pair<String,Double>> urlAndScores = new ArrayList<Pair<String,Double>>(queryDict.get(query).size());
-			for (String url : queryDict.get(query).keySet())
-			{
+		for (Query query : queryDict.keySet()) {
+			// loop through urls for query, getting scores
+			List<Pair<String, Double>> urlAndScores = new ArrayList<>(queryDict.get(query).size());
+			for (String url : queryDict.get(query).keySet()) {
 				double score = scorer.getSimScore(queryDict.get(query).get(url), query);
-				urlAndScores.add(new Pair<String,Double>(url,score));
+				urlAndScores.add(new Pair<>(url, score));
 			}
 
-			//sort urls for query based on scores
-			Collections.sort(urlAndScores, new Comparator<Pair<String,Double>>() {
-				@Override
-				public int compare(Pair<String, Double> o1, Pair<String, Double> o2) 
-				{
-					/*
-					 * @//TODO : Your code here
-					 */
-					return -1;
-				}	
-			});
+			// sort urls for query based on scores
+			Collections.sort(urlAndScores, (p1, p2) -> {
+                double s1 = p1.getSecond();
+                double s2 = p2.getSecond();
+
+                if (s1 < s2) {
+                    return -1;
+                } else if (s1 > s2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
 			
-			//put completed rankings into map
-			List<String> curRankings = new ArrayList<String>();
-			for (Pair<String,Double> urlAndScore : urlAndScores)
-				curRankings.add(urlAndScore.getFirst());
-			queryRankings.put(query, curRankings);
+			// put completed rankings into map
+            List<String> rankings = urlAndScores
+                    .stream()
+                    .map(Pair<String, Double>::getFirst)
+                    .collect(Collectors.toList());
+
+			queryRankings.put(query, rankings);
 		}
+
 		return queryRankings;
 	}
 
-	public static void printRankedResults(Map<Query,List<String>> queryRankings)
-	{
-		for (Query query : queryRankings.keySet())
-		{
-			StringBuilder queryBuilder = new StringBuilder();
-			for (String s : query.getQueryWords())
-			{
-				queryBuilder.append(s);
-				queryBuilder.append(" ");
-			}
-			
-	        System.out.println("query: " + queryBuilder.toString());
-	        for (String res : queryRankings.get(query))
-	        	System.out.println("  url: " + res);
+	public static void printRankedResults(Map<Query, List<String>> queryRankings) {
+		for (Query query : queryRankings.keySet()) {
+	        System.out.println("query: " + query.getOriginalQuery());
+	        for (String res : queryRankings.get(query)) {
+                System.out.println("  url: " + res);
+            }
 		}	
 	}
 	
-	//this probably doesn't need to be included, but if you output to a file, it may be easier to immediately run ndcg.java to score your results	
-	public static void writeRankedResultsToFile(Map<Query,List<String>> queryRankings,String outputFilePath)
-	{
+	// this probably doesn't need to be included
+	// but if you output to a file, it may be easier to immediately run NDCG to score your results
+	public static void writeRankedResultsToFile(Map<Query, List<String>> queryRankings, String outputFilePath) {
 		try {
 			File file = new File(outputFilePath);
  
 			// if file doesnt exists, then create it
-			if (!file.exists()) 
-				file.createNewFile();
+			if (!file.exists()) {
+                file.createNewFile();
+            }
 			
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			
-			for (Query query : queryRankings.keySet())
-			{
+			for (Query query : queryRankings.keySet()) {
 				StringBuilder queryBuilder = new StringBuilder();
-				for (String s : query.getQueryWords())
-				{
+				for (String s : query.getQueryWords()) {
 					queryBuilder.append(s);
 					queryBuilder.append(" ");
 				}
@@ -108,8 +102,7 @@ public class Rank
 		        System.out.print(queryStr);
 				bw.write(queryStr);
 				
-		        for (String res : queryRankings.get(query))
-		        {
+		        for (String res : queryRankings.get(query)) {
 		        	String urlString = "  url: " + res + "\n";
 		        	System.out.print(urlString);
 		        	bw.write(urlString);
@@ -123,14 +116,9 @@ public class Rank
 		}
 	}
 
-	public static void main(String[] args) throws IOException 
-	{
+	public static void main(String[] args) throws IOException {
 
 		IDF idfs = LoadHandler.loadIDFs();
-		
-		/*
-		 * @//TODO : Your code here to handle idfs
-		 */
 		
 		if (args.length < 2) {
 			System.err.println("Insufficient number of arguments: <queryDocTrainData path> taskType");
@@ -144,7 +132,7 @@ public class Rank
             return;
 		}
 			
-		Map<Query,Map<String, Document>> queryDict=null;
+		Map<Query, Map<String, Document>> queryDict = null;
 		
 		/* Populate map with features from file */
 		try {
@@ -153,8 +141,8 @@ public class Rank
 			e.printStackTrace();
 		}
 		
-		//score documents for queries
-		Map<Query,List<String>> queryRankings = score(queryDict,scoreType,idfs);
+		// score documents for queries
+		Map<Query, List<String>> queryRankings = score(queryDict, scoreType, idfs);
 		
 		//print results and save them to file 
 //		String outputFilePath =  null;

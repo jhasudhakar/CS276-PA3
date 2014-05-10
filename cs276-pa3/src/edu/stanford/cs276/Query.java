@@ -17,6 +17,10 @@ public class Query {
         return queryWords;
     }
 
+    public String getOriginalQuery() {
+        return originalQuery;
+    }
+
     @Override
     public int hashCode() {
         return originalQuery.hashCode();
