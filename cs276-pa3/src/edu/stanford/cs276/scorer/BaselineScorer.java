@@ -1,4 +1,7 @@
-package edu.stanford.cs276;
+package edu.stanford.cs276.scorer;
+
+import edu.stanford.cs276.Document;
+import edu.stanford.cs276.Query;
 
 public class BaselineScorer extends AScorer
 {
