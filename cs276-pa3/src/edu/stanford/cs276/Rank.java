@@ -1,5 +1,6 @@
 package edu.stanford.cs276;
 
+import edu.stanford.cs276.scorer.*;
 import edu.stanford.cs276.util.Pair;
 
 import java.io.BufferedWriter;

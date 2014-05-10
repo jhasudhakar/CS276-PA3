@@ -1,5 +1,8 @@
-package edu.stanford.cs276;
+package edu.stanford.cs276.scorer;
 
+import edu.stanford.cs276.Document;
+import edu.stanford.cs276.IDF;
+import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.doc.TermFreqExtractor;
 import edu.stanford.cs276.util.MapUtility;
