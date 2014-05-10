@@ -57,16 +57,22 @@ public abstract class AScorer
 
     /**
      * Compute dot product of two sparse vectors.
-     * As qv size is usually smaller than dv, the order matters.
-     * @param qv the query vector
-     * @param dv the document vector
+     * @param v1
+     * @param v2
      * @return
      */
-    public double dotProduct(Map<String, Double> qv, Map<String, Double> dv) {
+    public double dotProduct(Map<String, Double> v1, Map<String, Double> v2) {
+        // make sure v1 is smaller so that minimal computation is needed
+        if (v1.size() > v2.size()) {
+            Map<String, Double> temp = v1;
+            v1 = v2;
+            v2 = temp;
+        }
+
         double result = 0.0;
 
-        for (Map.Entry<String, Double> ev : qv.entrySet()) {
-            result += ev.getValue() * MapUtility.getWithFallback(dv, ev.getKey(), 0.0);
+        for (Map.Entry<String, Double> ev : v1.entrySet()) {
+            result += ev.getValue() * MapUtility.getWithFallback(v2, ev.getKey(), 0.0);
         }
 
         return result;
