@@ -48,6 +48,8 @@ def submit():
   # Part Identifier
   (partIdx, sid) = partPrompt()
 
+  #sid = sid + '-dev' # append "-dev" if the assignment hasn't been published 
+  
   # Get Challenge
   (login, ch, state, ch_aux) = getChallenge(login, sid) #sid is the "part identifier"
   if((not login) or (not ch) or (not state)):
@@ -56,12 +58,9 @@ def submit():
     return
 
   # Attempt Submission with Challenge
-  print 'before challengeResponse'
   ch_resp = challengeResponse(login, password, ch)
-  print 'before submitSolution'
   (result, string) = submitSolution(login, ch_resp, sid, output(partIdx,ch_aux), \
                                   source(partIdx), state, ch_aux)
-
   print '== %s' % string.strip()
 
 
@@ -124,10 +123,6 @@ def submit_url():
 
 def submitSolution(email_address, ch_resp, sid, output, source, state, ch_aux):
   """Submits a solution to the server. Returns (result, string)."""
-  #source_64_msg = email.message.Message()
-  #source_64_msg.set_payload(source)
-  #email.encoders.encode_base64(source_64_msg)
-
   output_64_msg = email.message.Message()
   output_64_msg.set_payload(output)
   email.encoders.encode_base64(output_64_msg)
@@ -179,46 +174,23 @@ def validParts():
                'Task 3 (Smallest Window)', \
                'Task 4 (Extra Credit)']
   return partNames
-# source files to collect (just for our records)
-#sourceFiles = ['sampleStudentAnswer.py', 'sampleStudentAnswer.py', 'sampleStudentAnswer.py']                           
     
 def ensure_dir(d):
     if not os.path.exists(d):
         os.makedirs(d)
         
-# def getFiles(tempoutfile):
-#     pathq = 'http://www.stanford.edu/~aimeeli/cs276_pa2';
-#     filenames = ['queries.txt']    
-
-#     ensure_dir(tempoutfile+'/test');
-    
-#     for filename in filenames:
-#         remotefile = urlopen(pathq + "/" + filename)
-#         localfile = open(tempoutfile+'/test/'+filename,'w')
-#         localfile.write(remotefile.read())
-#         localfile.close()
-#         remotefile.close()
-  
-        
 def output(partIdx,ch_aux):
   print '== If you use queryDocTrainData or queryDocTrainRel, make sure it\'s in the current working directory'
   print '== Running your code ...'
   print '== Your code should output results (and nothing else) to stdout'
-  # tempoutfile = tempfile.mkdtemp()
-  # getFiles(tempoutfile)
   outputString = ''
 
-  tempoutfile = tempfile.mkdtemp()
-  # ensure_dir(tempoutfile+'/test');
-
-  localfile = open(tempoutfile +"/test",'w')
+  tempoutfile = 'tmp' + str(random.randint(0,1<<20))
+  localfile = open(tempoutfile,'w')
   localfile.write(ch_aux)
   localfile.close()
 
-  # test_file = NamedTemporaryFile(delete=False)
-  # test_file.write(ch_aux)
-  # test_file.close()
-  linesOutput = 1320
+  linesOutput = 1065 
   
   if not os.path.exists("people.txt"):
       print "There is no people.txt file in this directory. Please make people.txt file in this directory with your and your partner's SUNet ID in separate lines (do NOT include @stanford.edu)"
@@ -243,19 +215,17 @@ def output(partIdx,ch_aux):
   elif partIdx == 1:
     print 'Calling ./rank.sh for Task 1 (this might take a while)'
     start = time()
-    child = Popen(['./rank.sh', tempoutfile +"/test",'cosine'], stdout=PIPE, stderr=PIPE, shell=False);
+    child = Popen(['./rank.sh', tempoutfile,'cosine'], stdout=PIPE, stderr=PIPE, shell=False);
     (res, err) = child.communicate("")  
-    # res = subprocess.check_output(['./rank.sh', tempoutfile +"/test",'cosine'])
-    # print err
-
     elapsed = time() - start
     guesses = res.splitlines()
+    print err
     if (len(guesses) != linesOutput):
         print 'Warning. The number of url-document pairs ' + str(len(guesses)) + ' is not correct. Please ensure that the output is formatted properly.'
   elif partIdx == 2:
       print 'Calling ./rank.sh for Task 2 (this might take a while)'
       start = time()
-      child = Popen(['./rank.sh', tempoutfile +"/test",'bm25'], stdout=PIPE, stderr=PIPE, shell=False)
+      child = Popen(['./rank.sh', tempoutfile,'bm25'], stdout=PIPE, stderr=PIPE, shell=False)
       (res, err) = child.communicate("")
       elapsed = time() - start
       guesses = res.splitlines()
@@ -265,7 +235,7 @@ def output(partIdx,ch_aux):
   elif partIdx == 3:
       print 'Calling ./rank.sh for Task 3 (this might take a while)'
       start = time()
-      child = Popen(['./rank.sh',tempoutfile +"/test",'window'], stdout=PIPE, stderr=PIPE, shell=False)
+      child = Popen(['./rank.sh',tempoutfile,'window'], stdout=PIPE, stderr=PIPE, shell=False)
       (res, err) = child.communicate("")
       elapsed = time() - start
       guesses = res.splitlines()
@@ -275,7 +245,7 @@ def output(partIdx,ch_aux):
   elif partIdx == 4:
       print 'Calling ./rank.sh for Task 4 (this might take a while)'
       start = time()
-      child = Popen(['./rank.sh', tempoutfile +"/test",'extra'], stdout=PIPE, stderr=PIPE, shell=False)
+      child = Popen(['./rank.sh', tempoutfile,'extra'], stdout=PIPE, stderr=PIPE, shell=False)
       (res, err) = child.communicate("")
       elapsed = time() - start
       guesses = res.splitlines()
@@ -286,6 +256,7 @@ def output(partIdx,ch_aux):
     print '[WARNING]\t[output]\tunknown partId: %s' % partIdx
     sys.exit(1)
   print '== Finished running your code'
+  os.remove(tempoutfile)
 
   return json.dumps(stats).strip()
 
