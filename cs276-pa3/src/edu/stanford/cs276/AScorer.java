@@ -9,18 +9,18 @@ import java.util.Map;
 
 public abstract class AScorer 
 {
-	protected IDF idfs;
-	public AScorer(IDF idfs)
-	{
-		this.idfs = idfs;
-	}
-	
-	// scores each document for each query
-	public abstract double getSimScore(Document d, Query q);
-	
-	// handle the query vector
-	public Map<String, Double> getQueryFreqs(Query q)
-	{
+    protected IDF idfs;
+    public AScorer(IDF idfs)
+    {
+        this.idfs = idfs;
+    }
+
+    // scores each document for each query
+    public abstract double getSimScore(Document d, Query q);
+
+    // handle the query vector
+    public Map<String, Double> getQueryFreqs(Query q)
+    {
         // get term frequency
         Map<String, Integer> counts = MapUtility.count(q.getQueryWords());
 
@@ -32,8 +32,8 @@ public abstract class AScorer
         }
 
         return tfQuery;
-	}
-	
+    }
+
     /**
      * Creates the various kinds of term frequencies (url, title, body, header, and anchor).
      * The implementation will be shared by subclasses.
@@ -41,16 +41,16 @@ public abstract class AScorer
      * @param q
      * @return
      */
-	public Map<DocField, Map<String, Double>> getDocTermFreqs(Document d, Query q) {
-		// map from tf type -> queryWord -> score
-		Map<DocField, Map<String, Double>> tfs = new HashMap<>();
+    public Map<DocField, Map<String, Double>> getDocTermFreqs(Document d, Query q) {
+        // map from tf type -> queryWord -> score
+        Map<DocField, Map<String, Double>> tfs = new HashMap<>();
 
         for (DocField docField : DocField.values()) {
             tfs.put(docField, TermFreqExtractor.getExtractor(docField).extractFrom(d, q));
         }
 
         return tfs;
-	}
+    }
 
     /**
      * Compute dot product of two sparse vectors.

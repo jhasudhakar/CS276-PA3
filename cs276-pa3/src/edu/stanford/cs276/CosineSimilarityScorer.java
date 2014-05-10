@@ -45,41 +45,41 @@ public class CosineSimilarityScorer extends AScorer
         return MapUtility.iMap(vals, val -> val == 0.0 ? 0.0 : 1 + Math.log(val));
     }
 
-	public double getNetScore(Map<DocField, Map<String, Double>> tfs, Query q,
+    public double getNetScore(Map<DocField, Map<String, Double>> tfs, Query q,
                               Map<String, Double> tfQuery, Document d)
-	{
-		double score = 0.0;
+    {
+        double score = 0.0;
 
         for (DocField docField : DocField.values()) {
             score += dotProduct(tfQuery, tfs.get(docField));
         }
 
         return score;
-	}
+    }
 
-	
-	public void normalizeTFs(Map<DocField, Map<String, Double>> tfs, Document d, Query q)
-	{
+
+    public void normalizeTFs(Map<DocField, Map<String, Double>> tfs, Document d, Query q)
+    {
         for (Map<String, Double> tf : tfs.values()) {
             lengthNormalize(sublinear(tf), d, q);
         }
     }
 
-	@Override
-	public double getSimScore(Document d, Query q) 
-	{
-		
-		Map<DocField, Map<String, Double>> tfs = getDocTermFreqs(d, q);
-		
-		normalizeTFs(tfs, d, q);
-		
-		Map<String, Double> tfQuery = getQueryFreqs(q);
-		
-        return getNetScore(tfs,q,tfQuery,d);
-	}
+    @Override
+    public double getSimScore(Document d, Query q)
+    {
 
-	
-	
-	
-	
+        Map<DocField, Map<String, Double>> tfs = getDocTermFreqs(d, q);
+
+        normalizeTFs(tfs, d, q);
+
+        Map<String, Double> tfQuery = getQueryFreqs(q);
+
+        return getNetScore(tfs,q,tfQuery,d);
+    }
+
+
+
+
+
 }

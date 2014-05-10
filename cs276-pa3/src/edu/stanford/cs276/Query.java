@@ -7,11 +7,11 @@ import java.util.List;
 public class Query {
     private String originalQuery;
     private List<String> queryWords;
-	
-	public Query(String query) {
+
+    public Query(String query) {
         originalQuery = query;
-		queryWords = new ArrayList<>(Arrays.asList(query.split(" ")));
-	}
+        queryWords = new ArrayList<>(Arrays.asList(query.split(" ")));
+    }
 
     public List<String> getQueryWords() {
         return queryWords;

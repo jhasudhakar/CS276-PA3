@@ -8,45 +8,45 @@ import java.util.Map;
 public class SmallestWindowScorer extends BM25Scorer
 {
 
-	/////smallest window specifichyperparameters////////
+    /////smallest window specifichyperparameters////////
     double B = -1;    	    
     double boostmod = -1;
     
     //////////////////////////////
-	
-	public SmallestWindowScorer(IDF idfs,Map<Query,Map<String, Document>> queryDict)
-	{
-		super(idfs, queryDict);
-		handleSmallestWindow();
-	}
 
-	
-	public void handleSmallestWindow()
-	{
-		/*
-		 * @//TODO : Your code here
-		 */
-	}
+    public SmallestWindowScorer(IDF idfs,Map<Query,Map<String, Document>> queryDict)
+    {
+        super(idfs, queryDict);
+        handleSmallestWindow();
+    }
 
-	
-	public double checkWindow(Query q,String docstr,double curSmallestWindow,boolean isBodyField)
-	{
-		/*
-		 * @//TODO : Your code here
-		 */
-		return -1;
-	}
-	
-	
-	@Override
-	public double getSimScore(Document d, Query q) {
-		Map<DocField,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
-		
-		this.normalizeTFs(tfs, d, q);
-		
-		Map<String,Double> tfQuery = getQueryFreqs(q);
-		
-		return 0;
-	}
+
+    public void handleSmallestWindow()
+    {
+        /*
+         * @//TODO : Your code here
+         */
+    }
+
+
+    public double checkWindow(Query q,String docstr,double curSmallestWindow,boolean isBodyField)
+    {
+        /*
+         * @//TODO : Your code here
+         */
+        return -1;
+    }
+
+
+    @Override
+    public double getSimScore(Document d, Query q) {
+        Map<DocField,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
+
+        this.normalizeTFs(tfs, d, q);
+
+        Map<String,Double> tfQuery = getQueryFreqs(q);
+
+        return 0;
+    }
 
 }
