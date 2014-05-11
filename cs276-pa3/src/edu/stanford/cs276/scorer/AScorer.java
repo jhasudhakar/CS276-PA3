@@ -62,17 +62,13 @@ public abstract class AScorer
      * @return
      */
     public double dotProduct(Map<String, Double> v1, Map<String, Double> v2) {
-        // make sure v1 is smaller so that minimal computation is needed
-        if (v1.size() > v2.size()) {
-            Map<String, Double> temp = v1;
-            v1 = v2;
-            v2 = temp;
-        }
-
         double result = 0.0;
 
-        for (Map.Entry<String, Double> ev : v1.entrySet()) {
-            result += ev.getValue() * MapUtility.getWithFallback(v2, ev.getKey(), 0.0);
+        // make sure v1 is smaller so that minimal computation is needed
+        if (v1.size() > v2.size()) {
+            result = v2.entrySet().stream().mapToDouble(ev -> ev.getValue() * MapUtility.getWithFallback(v1, ev.getKey(), 0.0)).sum();
+        } else {
+            result = v1.entrySet().stream().mapToDouble(ev -> ev.getValue() * MapUtility.getWithFallback(v2, ev.getKey(), 0.0)).sum();
         }
 
         return result;
