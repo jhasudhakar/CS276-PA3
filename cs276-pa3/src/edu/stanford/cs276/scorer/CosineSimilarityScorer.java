@@ -36,12 +36,7 @@ public class CosineSimilarityScorer extends AScorer
      */
     private Map<String, Double> lengthNormalize(Map<String, Double> termFreqs, Document d, Query q) {
         double smoothedBodyLength = d.bodyLength + SMOOTH_BODY_LENGTH;
-
-        for (Map.Entry<String, Double> e : termFreqs.entrySet()) {
-            termFreqs.put(e.getKey(), e.getValue() / smoothedBodyLength);
-        }
-
-        return termFreqs;
+        return MapUtility.iMap(termFreqs, f -> f / smoothedBodyLength);
     }
 
     private Map<String, Double> sublinear(Map<String, Double> vals) {

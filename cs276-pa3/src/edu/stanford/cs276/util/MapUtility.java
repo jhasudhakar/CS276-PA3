@@ -53,7 +53,7 @@ public class MapUtility {
      */
     public static <K, V> Map<K, V> iMap(Map<K, V> map, UnaryOperator<V> op) {
         for (Map.Entry<K, V> e : map.entrySet()) {
-            map.put(e.getKey(), op.apply(e.getValue()));
+            e.setValue(op.apply(e.getValue()));
         }
 
         return map;
