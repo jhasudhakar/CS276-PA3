@@ -49,9 +49,9 @@ public class Rank  {
                 double s2 = p2.getSecond();
 
                 if (s1 < s2) {
-                    return -1;
-                } else if (s1 > s2) {
                     return 1;
+                } else if (s1 > s2) {
+                    return -1;
                 } else {
                     return 0;
                 }
