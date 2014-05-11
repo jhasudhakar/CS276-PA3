@@ -13,10 +13,10 @@ public class TitleTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
         if (d.title == null) {
-            return EMPTY;
+            return EMPTY_MAP;
         }
 
-        List<String> titleWords = tokenize(d.title.toLowerCase(), "\\s+");
+        List<String> titleWords = FieldProcessor.splitTitle(d);
         return termFreqsFromField(titleWords, q);
     }
 }

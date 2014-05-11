@@ -14,7 +14,7 @@ public class BodyTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
         if (d.bodyHits == null) {
-            return EMPTY;
+            return EMPTY_MAP;
         }
 
         Map<String, Double> bodyTF = new HashMap<>();

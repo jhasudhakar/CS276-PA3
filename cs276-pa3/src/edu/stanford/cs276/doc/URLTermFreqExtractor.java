@@ -12,7 +12,7 @@ import java.util.Map;
 public class URLTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
-        List<String> urlWords = tokenize(d.url, "\\W+");
+        List<String> urlWords = FieldProcessor.splitURL(d);
         return termFreqsFromField(urlWords, q);
     }
 }
