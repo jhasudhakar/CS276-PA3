@@ -25,4 +25,18 @@ public class Query {
     public int hashCode() {
         return originalQuery.hashCode();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj == null || !(obj instanceof Query)) {
+            return false;
+        }
+
+        Query another = (Query)obj;
+        return this.originalQuery.equals(another.originalQuery);
+    }
 }

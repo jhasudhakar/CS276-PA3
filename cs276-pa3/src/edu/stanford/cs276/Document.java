@@ -14,9 +14,8 @@ public class Document {
     public int pageRank = 0;
     public Map<String, Integer> anchors = null; // term -> anchor_count
 
-    public Document(String url)
-    {
-        this.url=url;
+    public Document(String url) {
+        this.url = url;
     }
 
     // For debug
@@ -32,5 +31,24 @@ public class Document {
         if (anchors != null) result.append("anchors: " + anchors.toString() + NEW_LINE);
 
         return result.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj == null || !(obj instanceof Document)) {
+            return false;
+        }
+
+        Document another = (Document)obj;
+        return this.url.equals(another.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return url.hashCode();
     }
 }
