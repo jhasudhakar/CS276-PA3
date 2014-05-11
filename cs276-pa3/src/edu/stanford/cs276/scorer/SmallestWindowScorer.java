@@ -45,8 +45,6 @@ public class SmallestWindowScorer extends BM25Scorer
     public double getSimScore(Document d, Query q) {
         Map<DocField,Map<String, Double>> tfs = this.getDocTermFreqs(d,q);
 
-        this.normalizeTFs(tfs, d, q);
-
         Map<String,Double> tfQuery = getQueryFreqs(q);
 
         return 0;
