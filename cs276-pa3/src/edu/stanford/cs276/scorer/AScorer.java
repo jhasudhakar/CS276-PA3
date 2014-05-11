@@ -56,21 +56,30 @@ public abstract class AScorer
     }
 
     /**
+     * Optimized dot product.
+     * @param sv small vector
+     * @param lv large vector
+     * @return
+     */
+    private static double optimizedDotProduct(Map<String, Double> sv, Map<String, Double> lv) {
+        return sv.entrySet()
+                .stream()
+                .mapToDouble(ev -> ev.getValue() * MapUtility.getWithFallback(lv, ev.getKey(), 0.0))
+                .sum();
+    }
+
+    /**
      * Compute dot product of two sparse vectors.
-     * @param v1
-     * @param v2
+     * @param v1 sparse vector
+     * @param v2 sparse vector
      * @return
      */
     public double dotProduct(Map<String, Double> v1, Map<String, Double> v2) {
-        double result = 0.0;
-
         // make sure v1 is smaller so that minimal computation is needed
         if (v1.size() > v2.size()) {
-            result = v2.entrySet().stream().mapToDouble(ev -> ev.getValue() * MapUtility.getWithFallback(v1, ev.getKey(), 0.0)).sum();
+            return optimizedDotProduct(v2, v1);
         } else {
-            result = v1.entrySet().stream().mapToDouble(ev -> ev.getValue() * MapUtility.getWithFallback(v2, ev.getKey(), 0.0)).sum();
+            return optimizedDotProduct(v1, v2);
         }
-
-        return result;
     }
 }
