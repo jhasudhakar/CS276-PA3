@@ -48,7 +48,7 @@ public class LoadHandler
                 queryDict.get(query).get(url).addBodyHits(term, positions);
             } else if (key.equals("body_length")) {
                 queryDict.get(query).get(url).setBodyLength(Integer.parseInt(value));
-            } else if (key.equals("pagerank ")) {
+            } else if (key.equals("pagerank")) {
                     queryDict.get(query).get(url).setPageRank(Integer.parseInt(value));
             } else if (key.equals("anchor_text")) {
                 anchor_text = value.trim();
