@@ -27,7 +27,7 @@ public class Document {
     private Map<DocField, List<String>> fieldTokens;
 
     // for smallest window
-    private List<Pair<? extends Set<String>, List<Pair<Integer, String>>>> possibleWindows;
+    private List<Pair<Set<String>, List<Pair<Integer, String>>>> possibleWindows;
     private List<Pair<Integer, String>> bodyTermPositions;
 
     public Document(String url) {
@@ -98,7 +98,8 @@ public class Document {
         fieldTokens.put(DocField.header, FieldProcessor.splitHeaders(this.headers));
         fieldTokens.put(DocField.anchor, FieldProcessor.splitAnchors(this.anchors));
 
-        // cache sequence of each field
+        // cache unique terms and position of each term in each field
+        // cache the values to speed up future getWindow calls
         possibleWindows.add(translateList(fieldTokens.get(DocField.url)));
         possibleWindows.add(translateList(fieldTokens.get(DocField.title)));
 
@@ -124,8 +125,15 @@ public class Document {
                 .collect(Collectors.toList());
     }
 
-    private Pair<? extends Set<String>, List<Pair<Integer, String>>> translateList(List<String> terms) {
-        HashSet<String> uniqueTerms = new HashSet<>(terms);
+    /**
+     * Translate a List of String to a Pair, where
+     *      the first object is unique strings
+     *      the second object is a list of <index, str> pairs
+     * @param terms
+     * @return
+     */
+    private Pair<Set<String>, List<Pair<Integer, String>>> translateList(List<String> terms) {
+        Set<String> uniqueTerms = new HashSet<>(terms);
 
         List<Pair<Integer, String>> positions = IntStream.range(0, terms.size())
                 .boxed()
@@ -135,7 +143,16 @@ public class Document {
         return new Pair<>(uniqueTerms, positions);
     }
 
-    // Ref: http://stackoverflow.com/a/3592255/1240620
+
+    /**
+     * A generic minimal window computation algorithm.
+     * Ref: http://stackoverflow.com/a/3592255/1240620
+     * @param uniques unique objects in sequence
+     * @param positions positions of obejcts in sequence
+     * @param objects the objects to be included in the window
+     * @param <T>
+     * @return the minimal window
+     */
     private static <T> int getWindow(Set<T> uniques, List<Pair<Integer, T>> positions, Set<T> objects) {
         if (!uniques.containsAll(objects)) {
             return -1;
@@ -179,7 +196,8 @@ public class Document {
      */
     public int getSmallestWindow(List<String> terms) {
         HashSet<String> termSet = new HashSet<>(terms);
-        OptionalInt sw1 = possibleWindows.stream()
+        OptionalInt sw1 = possibleWindows
+                .stream()
                 .map(p -> getWindow(p.getFirst(), p.getSecond(), termSet))
                 .filter(i -> i > 0)
                 .mapToInt(i -> i)
