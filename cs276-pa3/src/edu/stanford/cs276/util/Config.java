@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,15 @@ public class Config {
         for (Field field : fields) {
             stringFieldMap.put(field.getName(), field);
         }
+        /* Get put method from Map.class. */
+        Method putMethod = null;
+        Method[] methods = Map.class.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getName().equals("put")) {
+                putMethod = method;
+            }
+        }
+
         try {
             File file = new File(fileName);
             br = new BufferedReader(new FileReader(file));
@@ -45,9 +55,10 @@ public class Config {
                         // Access a specific field
                         Field field = stringFieldMap.get(fieldName);
                         field.setAccessible(true);
-                        Map<DocField, Double> map = (Map<DocField, Double>)(field.get(scorer));
+                        Object map = field.get(scorer);
                         // Invoke put method
-                        map.put(stringDocFieldMap.get(key), value);
+                        putMethod.setAccessible(true);
+                        putMethod.invoke(map, stringDocFieldMap.get(key), value);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
