@@ -130,9 +130,9 @@ public class BM25Scorer extends AScorer {
                 .map(t -> {
                     double idf = idfs.getValue(t);
                     double wdt = getTermWeight(d, tfs, t);
-                    return idf * wdt * (1 + K1) / (wdt + K1) + lambda * V(d.pageRank);
+                    return idf * wdt / (wdt + K1);
                 })
                 .mapToDouble(x -> x)
-                .sum();
+                .sum() + lambda * V(d.pageRank);
     }
 }
