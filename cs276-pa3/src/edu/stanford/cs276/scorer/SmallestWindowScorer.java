@@ -4,8 +4,10 @@ import edu.stanford.cs276.Document;
 import edu.stanford.cs276.IDF;
 import edu.stanford.cs276.Query;
 
+import java.util.List;
+
 public class SmallestWindowScorer extends CosineSimilarityScorer {
-    double B = -1;
+    private double B = 2.0;
 
     public SmallestWindowScorer(IDF idfs) {
         super(idfs);
@@ -17,6 +19,16 @@ public class SmallestWindowScorer extends CosineSimilarityScorer {
     }
 
     private double getBoost(Document d, Query q) {
-        return 1;
+        List<String> queryWords = q.getQueryWords();
+        int smallestWindow = d.getSmallestWindow(queryWords);
+        if (smallestWindow == -1) {
+            return 1;
+        } else {
+            return discount(smallestWindow, queryWords.size());
+        }
+    }
+
+    private double discount(int smallestWindow, int Q) {
+        return 1.0 + (B - 1.0) / (smallestWindow - Q + 1);
     }
 }
