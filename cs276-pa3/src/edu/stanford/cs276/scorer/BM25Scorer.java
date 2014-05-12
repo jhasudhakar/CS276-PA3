@@ -6,31 +6,35 @@ import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.util.MapUtility;
 
-import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static edu.stanford.cs276.util.Config.setParameters;
 
 public class BM25Scorer extends AScorer {
     // static variables (parameters)
     private static Map<DocField, Double> Bf;
     private static Map<DocField, Double> Wf;
-    private static String BfConfigFile = "bf.properties";
-    private static String WfConfigFile = "wf.properties";
-    private double K1 = 1.5;
-    private double lambda = 0;
-    private double lambdaPrime = 0.5;
+    final private static String CONFIG = "bm25.config";
+    private double K1 = 1;
+    private double lambda = 1;
+    private double lambdaPrime = 1;
 
 
     // initialize weights
     static {
         Bf = new HashMap<>();
-        Bf.put(DocField.url, 0.75);
-        Bf.put(DocField.title, 0.75);
-        Bf.put(DocField.header, 0.75);
-        Bf.put(DocField.body, 0.75);
-        Bf.put(DocField.anchor, 0.75);
+        Bf.put(DocField.url, 1.0);
+        Bf.put(DocField.title, 1.0);
+        Bf.put(DocField.header, 1.0);
+        Bf.put(DocField.body, 1.0);
+        Bf.put(DocField.anchor, 1.0);
 
         Wf = new HashMap<>();
         Wf.put(DocField.url, 1.0);
@@ -54,26 +58,14 @@ public class BM25Scorer extends AScorer {
         super(idfs);
 
         /* Read in config file and set parameters. */
-        setParameters(Bf, BfConfigFile);
-        setParameters(Wf, WfConfigFile);
+        setParameters(this, CONFIG);
 
         this.queryDict = queryDict;
 
         calcAverageLengths();
     }
 
-    private void setParameters(Map<DocField, Double> parameters, String fileName) {
-        try {
-            FileInputStream input = new FileInputStream(fileName);
-            Properties properties = new Properties();
-            properties.load(input);
-            for (Map.Entry<DocField, Double> entry : parameters.entrySet()) {
-                entry.setValue(Double.parseDouble(properties.getProperty(entry.getKey().toString())));
-            }
-        } catch (IOException e) {
-            return;
-        }
-    }
+
 
     /**
      * Compute length of given field for every document.
