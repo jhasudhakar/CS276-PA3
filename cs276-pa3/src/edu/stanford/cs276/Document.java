@@ -55,7 +55,7 @@ public class Document {
         term = normalize(term);
 
         if (this.bodyHits.containsKey(term)) {
-            System.err.println("Warning: duplicate term " + term);
+            throw new IllegalStateException("Duplicate term in body");
         }
 
         this.bodyHits.put(term, positions);
