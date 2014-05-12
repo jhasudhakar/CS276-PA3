@@ -39,6 +39,17 @@ public class MapUtility {
         return counts;
     }
 
+    public static <T> Map<T, Double> countAsDouble(Collection<T> collection) {
+        Map<T, Integer> rawCounts = count(collection);
+        Map<T, Double> counts = new HashMap<>();
+
+        for (Map.Entry<T, Integer> et : rawCounts.entrySet()) {
+            counts.put(et.getKey(), 1.0 * et.getValue());
+        }
+
+        return counts;
+    }
+
     /**
      * Apply op on each element in map.
      */
@@ -57,5 +68,13 @@ public class MapUtility {
         }
 
         return map;
+    }
+
+    public static Map<String, Double> magnify(Map<String, Double> counts, Integer factor) {
+        for (Map.Entry<String, Double> et : counts.entrySet()) {
+            et.setValue(et.getValue() * factor);
+        }
+
+        return counts;
     }
 }
