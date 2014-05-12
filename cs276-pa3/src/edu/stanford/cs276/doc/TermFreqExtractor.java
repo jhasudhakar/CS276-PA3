@@ -12,7 +12,7 @@ import java.util.*;
  */
 public abstract class TermFreqExtractor {
     private static Map<DocField, TermFreqExtractor> extractors;
-    protected static Map<String, Double> EMPTY_MAP = new HashMap<>();
+    protected static Map<String, Double> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<>());
 
     static {
         // initialize known field vectors

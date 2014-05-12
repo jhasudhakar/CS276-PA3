@@ -1,9 +1,6 @@
 package edu.stanford.cs276.doc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by kavinyao on 5/10/14.
@@ -11,7 +8,7 @@ import java.util.Map;
 public class FieldProcessor {
     protected static final String NON_WORD_REGEX = "\\W+";
     protected static final String WHITE_SPACE_REGEX = "\\s+";
-    public static List<String> EMPTY_LIST = new ArrayList<>();
+    public static List<String> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>());
 
     /**
      * URL most not be null.
