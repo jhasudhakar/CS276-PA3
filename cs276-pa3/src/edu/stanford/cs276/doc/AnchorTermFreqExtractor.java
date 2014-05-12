@@ -4,6 +4,7 @@ import edu.stanford.cs276.Document;
 import edu.stanford.cs276.Query;
 import edu.stanford.cs276.util.MapUtility;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class AnchorTermFreqExtractor extends TermFreqExtractor {
         Map<String, Integer> anchors = d.getAnchors();
 
         if (anchors.size() == 0) {
-            return EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         Map<String, Double> counts = anchors.entrySet()
