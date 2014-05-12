@@ -109,7 +109,7 @@ public class BM25Scorer extends AScorer {
                 .stream()
                 .map(f -> {
                     double tf = MapUtility.getWithFallback(tfs.get(f), t, 0.0);
-                    double ftf = tf / (1 + Bf.get(f) * lengths.get(f).get(d) / avgLengths.get(f) - 1);
+                    double ftf = tf / (1 + Bf.get(f) * (lengths.get(f).get(d) / avgLengths.get(f) - 1));
                     return Wf.get(f) * ftf;
                 })
                 .mapToDouble(x -> x)
