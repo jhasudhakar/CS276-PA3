@@ -12,11 +12,7 @@ import java.util.Map;
 public class TitleTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
-        if (d.title == null) {
-            return EMPTY_MAP;
-        }
-
-        List<String> titleWords = FieldProcessor.splitTitle(d);
+        List<String> titleWords = d.getFieldTokens(DocField.title);
         return termFreqsFromField(titleWords, q);
     }
 }

@@ -12,7 +12,7 @@ import java.util.*;
  */
 public abstract class TermFreqExtractor {
     private static Map<DocField, TermFreqExtractor> extractors;
-    protected static Map<String, Double> EMPTY_MAP = new HashMap<>();
+    protected static Map<String, Double> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<>());
 
     static {
         // initialize known field vectors
@@ -45,6 +45,10 @@ public abstract class TermFreqExtractor {
      * @return
      */
     protected Map<String, Double> termFreqsFromField(List<String> fieldWords, Query q) {
+        if (fieldWords.size() == 0) {
+            return EMPTY_MAP;
+        }
+
         Map<String, Integer> counts = MapUtility.count(fieldWords);
         Map<String, Double> termFreqs = new HashMap<>();
         for (String qw : q.getQueryWords()) {

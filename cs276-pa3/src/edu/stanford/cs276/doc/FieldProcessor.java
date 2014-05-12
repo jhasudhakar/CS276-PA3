@@ -1,7 +1,5 @@
 package edu.stanford.cs276.doc;
 
-import edu.stanford.cs276.Document;
-
 import java.util.*;
 
 /**
@@ -10,42 +8,52 @@ import java.util.*;
 public class FieldProcessor {
     protected static final String NON_WORD_REGEX = "\\W+";
     protected static final String WHITE_SPACE_REGEX = "\\s+";
-    protected static List<String> EMPTY_LIST = new ArrayList<>();
+    public static List<String> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>());
 
-    public static List<String> splitURL(Document d) {
-        return tokenize(d.url, NON_WORD_REGEX);
+    /**
+     * URL most not be null.
+     * @param url
+     * @return
+     */
+    public static List<String> splitURL(String url) {
+        return tokenize(url, NON_WORD_REGEX);
     }
 
-    public static List<String> splitTitle(Document d) {
-        if (d.title == null) {
+    /**
+     * title must be in lowercased if not null.
+     * @param title
+     * @return
+     */
+    public static List<String> splitTitle(String title) {
+        if (title == null) {
             return EMPTY_LIST;
         }
 
-        return tokenize(d.title.toLowerCase(), WHITE_SPACE_REGEX);
+        return tokenize(title, WHITE_SPACE_REGEX);
     }
 
-    public static List<String> splitHeaders(Document d) {
-        if (d.headers == null) {
+    public static List<String> splitHeaders(List<String> headers) {
+        if (headers.size() == 0) {
             return EMPTY_LIST;
         }
 
         List<String> headerWords = new ArrayList<>();
 
-        for (String header : d.headers) {
+        for (String header : headers) {
             headerWords.addAll(tokenize(header.toLowerCase(), WHITE_SPACE_REGEX));
         }
 
         return headerWords;
     }
 
-    public static List<String> splitAnchors(Document d) {
-        if (d.anchors == null) {
+    public static List<String> splitAnchors(Map<String, Integer> anchors) {
+        if (anchors.size() == 0) {
             return EMPTY_LIST;
         }
 
         List<String> anchorWords = new ArrayList<>();
 
-        for (String anchorText : d.anchors.keySet()) {
+        for (String anchorText : anchors.keySet()) {
             anchorWords.addAll(tokenize(anchorText.toLowerCase(), WHITE_SPACE_REGEX));
         }
 

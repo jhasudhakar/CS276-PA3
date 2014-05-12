@@ -12,12 +12,7 @@ import java.util.Map;
 public class AnchorTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
-        if (d.anchors == null) {
-            return EMPTY_MAP;
-        }
-
-        List<String> anchorWords = FieldProcessor.splitAnchors(d);
-
+        List<String> anchorWords = d.getFieldTokens(DocField.anchor);
         return termFreqsFromField(anchorWords, q);
     }
 }
