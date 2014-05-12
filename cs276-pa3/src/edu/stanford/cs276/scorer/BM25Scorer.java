@@ -6,10 +6,9 @@ import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.util.MapUtility;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,6 +16,8 @@ public class BM25Scorer extends AScorer {
     // static variables (parameters)
     private static Map<DocField, Double> Bf;
     private static Map<DocField, Double> Wf;
+    private static String BfConfigFile = "bf.properties";
+    private static String WfConfigFile = "wf.properties";
     private double K1 = 1.5;
     private double lambda = 0;
     private double lambdaPrime = 0.5;
@@ -52,9 +53,26 @@ public class BM25Scorer extends AScorer {
     public BM25Scorer(IDF idfs, Map<Query, Map<String, Document>> queryDict) {
         super(idfs);
 
+        /* Read in config file and set parameters. */
+        setParameters(Bf, BfConfigFile);
+        setParameters(Wf, WfConfigFile);
+
         this.queryDict = queryDict;
 
         calcAverageLengths();
+    }
+
+    private void setParameters(Map<DocField, Double> parameters, String fileName) {
+        try {
+            FileInputStream input = new FileInputStream(fileName);
+            Properties properties = new Properties();
+            properties.load(input);
+            for (Map.Entry<DocField, Double> entry : parameters.entrySet()) {
+                entry.setValue(Double.parseDouble(properties.getProperty(entry.getKey().toString())));
+            }
+        } catch (IOException e) {
+            return;
+        }
     }
 
     /**
