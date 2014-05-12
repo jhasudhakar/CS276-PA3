@@ -29,7 +29,12 @@ public class NDCG {
         }
         br.close();
 
-        br = new BufferedReader(new FileReader(args[0]));
+        if (args[0].equals("-")) {
+            br = new BufferedReader(new InputStreamReader(System.in));
+        } else {
+            br = new BufferedReader(new FileReader(args[0]));
+        }
+
         int totalQueries = 0;
         ArrayList<Double> rels = new ArrayList<>();
         double totalSum = 0;
