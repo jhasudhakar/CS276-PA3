@@ -5,8 +5,10 @@ import edu.stanford.cs276.doc.FieldProcessor;
 import edu.stanford.cs276.util.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class Document {
     // fields
@@ -122,7 +124,7 @@ public class Document {
                 })
                 // sort by index
                 .sorted((p1, p2) -> p1.getFirst().compareTo(p2.getFirst()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     /**
@@ -134,7 +136,7 @@ public class Document {
         return IntStream.range(0, terms.size())
                 .boxed()
                 .map(i -> new Pair<>(i, terms.get(i)))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
 
@@ -150,7 +152,7 @@ public class Document {
         Set<T> uniques = positions
                 .stream()
                 .map(p -> p.getSecond())
-                .collect(Collectors.toSet());
+                .collect(toSet());
 
         if (!uniques.containsAll(objects)) {
             return -1;
