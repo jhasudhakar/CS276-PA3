@@ -24,3 +24,6 @@ cs276-pa3/classes
 report.aux
 report.log
 report.out
+
+# config
+*.config
