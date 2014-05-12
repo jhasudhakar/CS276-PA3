@@ -27,7 +27,7 @@ public class Document {
     private Map<DocField, List<String>> fieldTokens;
 
     // for smallest window
-    private List<Pair<Set<String>, List<Pair<Integer, String>>>> possibleWindows;
+    private List<List<Pair<Integer, String>>> possibleWindows;
     private List<Pair<Integer, String>> bodyTermPositions;
 
     public Document(String url) {
@@ -126,34 +126,32 @@ public class Document {
     }
 
     /**
-     * Translate a List of String to a Pair, where
-     *      the first object is unique strings
-     *      the second object is a list of <index, str> pairs
+     * Translate a List of String to a list of <index, str> pairs
      * @param terms
      * @return
      */
-    private Pair<Set<String>, List<Pair<Integer, String>>> translateList(List<String> terms) {
-        Set<String> uniqueTerms = new HashSet<>(terms);
-
-        List<Pair<Integer, String>> positions = IntStream.range(0, terms.size())
+    private List<Pair<Integer, String>> translateList(List<String> terms) {
+        return IntStream.range(0, terms.size())
                 .boxed()
                 .map(i -> new Pair<>(i, terms.get(i)))
                 .collect(Collectors.toList());
-
-        return new Pair<>(uniqueTerms, positions);
     }
 
 
     /**
      * A generic minimal window computation algorithm.
      * Ref: http://stackoverflow.com/a/3592255/1240620
-     * @param uniques unique objects in sequence
      * @param positions positions of obejcts in sequence
      * @param objects the objects to be included in the window
      * @param <T>
      * @return the minimal window
      */
-    private static <T> int getWindow(Set<T> uniques, List<Pair<Integer, T>> positions, Set<T> objects) {
+    private static <T> int getWindow(List<Pair<Integer, T>> positions, Set<T> objects) {
+        Set<T> uniques = positions
+                .stream()
+                .map(p -> p.getSecond())
+                .collect(Collectors.toSet());
+
         if (!uniques.containsAll(objects)) {
             return -1;
         }
@@ -185,7 +183,7 @@ public class Document {
      * @return
      */
     private int getBodyWindow(Set<String> terms) {
-        return getWindow(bodyHits.keySet(), bodyTermPositions, terms);
+        return getWindow(bodyTermPositions, terms);
     }
 
     /**
@@ -198,7 +196,7 @@ public class Document {
         HashSet<String> termSet = new HashSet<>(terms);
         OptionalInt sw1 = possibleWindows
                 .stream()
-                .map(p -> getWindow(p.getFirst(), p.getSecond(), termSet))
+                .map(pos -> getWindow(pos, termSet))
                 .filter(i -> i > 0)
                 .mapToInt(i -> i)
                 .min();
