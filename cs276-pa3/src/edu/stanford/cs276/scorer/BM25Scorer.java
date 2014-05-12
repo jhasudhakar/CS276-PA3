@@ -6,11 +6,12 @@ import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.util.MapUtility;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static edu.stanford.cs276.doc.FieldProcessor.*;
 
 public class BM25Scorer extends AScorer {
     // static variables (parameters)
@@ -88,21 +89,20 @@ public class BM25Scorer extends AScorer {
 
         // compute length of each field
         lengths = new HashMap<>();
-        lengths.put(DocField.url, lengthsOfField(uniqueDocs, d -> splitURL(d).size()));
-        lengths.put(DocField.title, lengthsOfField(uniqueDocs, d -> splitTitle(d).size()));
-        lengths.put(DocField.header, lengthsOfField(uniqueDocs, d -> splitHeaders(d).size()));
-        lengths.put(DocField.body, lengthsOfField(uniqueDocs, d -> d.bodyLength));
-        lengths.put(DocField.anchor, lengthsOfField(uniqueDocs, d -> splitAnchors(d).size()));
+        for (DocField f : DocField.values()) {
+            lengths.put(f, lengthsOfField(uniqueDocs, d -> d.getNumFieldTokens(f)));
+        }
 
         // compute average lengths of each field
         avgLengths = new HashMap<>();
         for (DocField docField : DocField.values()) {
             avgLengths.put(docField, averageFieldLength(lengths.get(docField)));
+            //System.err.println("avg(" + docField + ") = " + avgLengths.get(docField));
         }
 
         pagerankScores = uniqueDocs
                 .stream()
-                .collect(Collectors.toMap(Function.identity(), d -> new Double(d.pageRank)));
+                .collect(Collectors.toMap(Function.identity(), d -> new Double(d.getPageRank())));
     }
 
     private double getTermWeight(Document d, Map<DocField, Map<String, Double>> tfs, String t) {
@@ -134,6 +134,6 @@ public class BM25Scorer extends AScorer {
                     return idf * wdt / (wdt + K1);
                 })
                 .mapToDouble(x -> x)
-                .sum() + lambda * V(d.pageRank);
+                .sum() + lambda * V(d.getPageRank());
     }
 }

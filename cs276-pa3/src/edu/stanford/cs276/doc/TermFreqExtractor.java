@@ -45,6 +45,10 @@ public abstract class TermFreqExtractor {
      * @return
      */
     protected Map<String, Double> termFreqsFromField(List<String> fieldWords, Query q) {
+        if (fieldWords.size() == 0) {
+            return EMPTY_MAP;
+        }
+
         Map<String, Integer> counts = MapUtility.count(fieldWords);
         Map<String, Double> termFreqs = new HashMap<>();
         for (String qw : q.getQueryWords()) {

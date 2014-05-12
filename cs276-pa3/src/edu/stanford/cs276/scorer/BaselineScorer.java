@@ -2,28 +2,19 @@ package edu.stanford.cs276.scorer;
 
 import edu.stanford.cs276.Document;
 import edu.stanford.cs276.Query;
+import edu.stanford.cs276.doc.DocField;
 
 public class BaselineScorer extends AScorer
 {
 
-    public BaselineScorer()
-    {
+    public BaselineScorer() {
         //don't need idfs for the baseline
         super(null);
     }
 
-    //We sum over the length of the bodyHits array for all query terms
+    // sum over the length of the bodyHits array for all query terms
     @Override
-    public double getSimScore(Document d, Query q)
-    {
-        double score = 0.0;
-        if (d.bodyHits !=null)
-        {
-            for (String term : d.bodyHits.keySet())
-                score += d.bodyHits.get(term).size();
-        }
-
-        return score;
+    public double getSimScore(Document d, Query q) {
+        return d.getNumFieldTokens(DocField.body);
     }
-
 }

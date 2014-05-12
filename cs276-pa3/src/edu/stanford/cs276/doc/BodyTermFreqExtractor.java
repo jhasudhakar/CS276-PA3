@@ -13,13 +13,14 @@ import java.util.Map;
 public class BodyTermFreqExtractor extends TermFreqExtractor {
     @Override
     public Map<String, Double> extractFrom(Document d, Query q) {
-        if (d.bodyHits == null) {
+        Map<String, List<Integer>> bodyHits = d.getBodyHits();
+        if (bodyHits.size() == 0) {
             return EMPTY_MAP;
         }
 
         Map<String, Double> bodyTF = new HashMap<>();
 
-        for (Map.Entry<String, List<Integer>> et : d.bodyHits.entrySet()) {
+        for (Map.Entry<String, List<Integer>> et : bodyHits.entrySet()) {
             bodyTF.put(et.getKey(), (double) et.getValue().size());
         }
 
