@@ -128,14 +128,13 @@ public class Document {
     }
 
     /**
-     * Translate a List of String to a list of <index, str> pairs
+     * Translate a List of String to a list of <index, term> pairs
      * @param terms
      * @return
      */
     private List<Pair<Integer, String>> translateList(List<String> terms) {
         return IntStream.range(0, terms.size())
-                .boxed()
-                .map(i -> new Pair<>(i, terms.get(i)))
+                .mapToObj(i -> new Pair<>(i, terms.get(i)))
                 .collect(toList());
     }
 
@@ -170,8 +169,9 @@ public class Document {
                 indices.put(obj, j);
                 if (indices.size() == objects.size()) {
                     int i = indices.values().iterator().next();
-                    if (window > j - i + 1)
+                    if (window > j - i + 1) {
                         window = j - i + 1;
+                    }
                 }
             }
         }
@@ -191,11 +191,10 @@ public class Document {
     /**
      * Compute the smallest window containing all the terms.
      * smallest-window(d, terms) = min(window(f, terms)) for f of d.fields
-     * @param terms
+     * @param termSet unique terms
      * @return the smallest window, or -1 if no smallest window found
      */
-    public int getSmallestWindow(List<String> terms) {
-        HashSet<String> termSet = new HashSet<>(terms);
+    public int getSmallestWindow(Set<String> termSet) {
         OptionalInt sw1 = possibleWindows
                 .stream()
                 .map(pos -> getWindow(pos, termSet))

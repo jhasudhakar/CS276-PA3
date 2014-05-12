@@ -4,7 +4,7 @@ import edu.stanford.cs276.Document;
 import edu.stanford.cs276.IDF;
 import edu.stanford.cs276.Query;
 
-import java.util.List;
+import java.util.HashSet;
 
 public class SmallestWindowScorer extends CosineSimilarityScorer {
     private double B = 2.0;
@@ -19,16 +19,12 @@ public class SmallestWindowScorer extends CosineSimilarityScorer {
     }
 
     private double getBoost(Document d, Query q) {
-        List<String> queryWords = q.getQueryWords();
-        int smallestWindow = d.getSmallestWindow(queryWords);
-        if (smallestWindow == -1) {
-            return 1;
-        } else {
-            return discount(smallestWindow, queryWords.size());
-        }
+        HashSet<String> termSet = new HashSet<>(q.getQueryWords());
+        int smallestWindow = d.getSmallestWindow(termSet);
+        return discount(smallestWindow == -1 ? Double.POSITIVE_INFINITY : smallestWindow, termSet.size());
     }
 
-    private double discount(int smallestWindow, int Q) {
+    private double discount(double smallestWindow, int Q) {
         return 1.0 + (B - 1.0) / (smallestWindow - Q + 1);
     }
 }
