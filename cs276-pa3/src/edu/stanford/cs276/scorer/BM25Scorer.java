@@ -66,12 +66,13 @@ public class BM25Scorer extends AScorer {
                                                  Function<Document, Integer> getLength) {
         return docs
                 .stream()
-                .collect(Collectors.toMap(d -> d, d -> getLength.apply(d).doubleValue()));
+                .collect(Collectors.toMap(Function.identity(), d -> getLength.apply(d).doubleValue()));
     }
 
     private static Double averageFieldLength(Map<Document, Double> fieldLengths) {
         return fieldLengths.values()
                 .stream()
+                // cannot use Function.identity as a ToDoubleFunction, :(
                 .mapToDouble(d -> d)
                 .average()
                 .getAsDouble();
@@ -101,7 +102,7 @@ public class BM25Scorer extends AScorer {
 
         pagerankScores = uniqueDocs
                 .stream()
-                .collect(Collectors.toMap(d -> d, d -> new Double(d.pageRank)));
+                .collect(Collectors.toMap(Function.identity(), d -> new Double(d.pageRank)));
     }
 
     private double getTermWeight(Document d, Map<DocField, Map<String, Double>> tfs, String t) {

@@ -75,9 +75,4 @@ public class CosineSimilarityScorer extends AScorer
 
         return getNetScore(tfs,q,tfQuery,d);
     }
-
-
-
-
-
 }
