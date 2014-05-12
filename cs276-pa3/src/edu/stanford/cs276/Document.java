@@ -2,11 +2,13 @@ package edu.stanford.cs276;
 
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.doc.FieldProcessor;
+import edu.stanford.cs276.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class Document {
     // fields
@@ -26,9 +28,14 @@ public class Document {
     // cached tokens: field -> [tokens]
     private Map<DocField, List<String>> fieldTokens;
 
+    // for smallest window
+    private List<List<Pair<Integer, String>>> possibleWindows;
+    private List<Pair<Integer, String>> bodyTermPositions;
+
     public Document(String url) {
         this.url = normalize(url);
         this.fieldTokens = new HashMap<>();
+        this.possibleWindows = new ArrayList<>();
     }
 
     private static String normalize(String s) {
@@ -55,7 +62,7 @@ public class Document {
         term = normalize(term);
 
         if (this.bodyHits.containsKey(term)) {
-            System.err.println("Warning: duplicate term " + term);
+            throw new IllegalStateException("Duplicate term in body");
         }
 
         this.bodyHits.put(term, positions);
@@ -87,10 +94,123 @@ public class Document {
      * Call this method after this document is constructed.
      */
     public void end() {
+        // cache tokens of each field
         fieldTokens.put(DocField.url, FieldProcessor.splitURL(this.url));
         fieldTokens.put(DocField.title, FieldProcessor.splitTitle(this.title));
         fieldTokens.put(DocField.header, FieldProcessor.splitHeaders(this.headers));
         fieldTokens.put(DocField.anchor, FieldProcessor.splitAnchors(this.anchors));
+
+        // cache unique terms and position of each term in each field
+        // cache the values to speed up future getWindow calls
+        possibleWindows.add(translateList(fieldTokens.get(DocField.url)));
+        possibleWindows.add(translateList(fieldTokens.get(DocField.title)));
+
+        for (String header : headers) {
+            possibleWindows.add(translateList(FieldProcessor.splitField(header)));
+        }
+
+        for (String anchorText : anchors.keySet()) {
+            possibleWindows.add(translateList(FieldProcessor.splitField(anchorText)));
+        }
+
+        bodyTermPositions = bodyHits.entrySet()
+                .stream()
+                // generate <index, term> pairs
+                .flatMap(es -> {
+                    String term = es.getKey();
+                    return es.getValue()
+                            .stream()
+                            .map(i -> new Pair<>(i, term));
+                })
+                // sort by index
+                .sorted((p1, p2) -> p1.getFirst().compareTo(p2.getFirst()))
+                .collect(toList());
+    }
+
+    /**
+     * Translate a List of String to a list of <index, term> pairs
+     * @param terms
+     * @return
+     */
+    private List<Pair<Integer, String>> translateList(List<String> terms) {
+        return IntStream.range(0, terms.size())
+                .mapToObj(i -> new Pair<>(i, terms.get(i)))
+                .collect(toList());
+    }
+
+
+    /**
+     * A generic minimal window computation algorithm.
+     * Ref: http://stackoverflow.com/a/3592255/1240620
+     * @param positions positions of obejcts in sequence
+     * @param objects the objects to be included in the window
+     * @param <T>
+     * @return the minimal window
+     */
+    private static <T> int getWindow(List<Pair<Integer, T>> positions, Set<T> objects) {
+        Set<T> uniques = positions
+                .stream()
+                .map(p -> p.getSecond())
+                .collect(toSet());
+
+        if (!uniques.containsAll(objects)) {
+            return -1;
+        }
+
+        int window = positions.size();
+        Map<T, Integer> indices = new LinkedHashMap<>();
+
+        for (Pair<Integer, T> position : positions) {
+            int j = position.getFirst();
+            T obj = position.getSecond();
+
+            if (objects.contains(obj)) {
+                indices.remove(obj);
+                indices.put(obj, j);
+                if (indices.size() == objects.size()) {
+                    int i = indices.values().iterator().next();
+                    if (window > j - i + 1) {
+                        window = j - i + 1;
+                    }
+                }
+            }
+        }
+
+        return window;
+    }
+
+    /**
+     * Get smallest window in body.
+     * @param terms
+     * @return
+     */
+    private int getBodyWindow(Set<String> terms) {
+        return getWindow(bodyTermPositions, terms);
+    }
+
+    /**
+     * Compute the smallest window containing all the terms.
+     * smallest-window(d, terms) = min(window(f, terms)) for f of d.fields
+     * @param termSet unique terms
+     * @return the smallest window, or -1 if no smallest window found
+     */
+    public int getSmallestWindow(Set<String> termSet) {
+        OptionalInt sw1 = possibleWindows
+                .stream()
+                .map(pos -> getWindow(pos, termSet))
+                .filter(i -> i > 0)
+                .mapToInt(i -> i)
+                .min();
+
+        int sw = sw1.isPresent() ? sw1.getAsInt() : -1;
+
+        int bodySw = getBodyWindow(termSet);
+
+        if (sw == -1 || sw > bodySw) {
+            sw = bodySw;
+        }
+
+        return sw;
     }
 
     public List<String> getFieldTokens(DocField f) {

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.*;
 
 import static edu.stanford.cs276.util.Config.setParameters;
 
@@ -77,7 +77,7 @@ public class BM25Scorer extends AScorer {
                                                  Function<Document, Integer> getLength) {
         return docs
                 .stream()
-                .collect(Collectors.toMap(Function.identity(), d -> getLength.apply(d).doubleValue()));
+                .collect(toMap(Function.identity(), d -> getLength.apply(d).doubleValue()));
     }
 
     private static Double averageFieldLength(Map<Document, Double> fieldLengths) {
@@ -95,7 +95,7 @@ public class BM25Scorer extends AScorer {
                 .stream()
                 .flatMap(m -> m.values().stream())
                 .distinct()
-                .collect(Collectors.toList());
+                .collect(toList());
 
         // compute length of each field
         lengths = new HashMap<>();
@@ -112,7 +112,7 @@ public class BM25Scorer extends AScorer {
 
         pagerankScores = uniqueDocs
                 .stream()
-                .collect(Collectors.toMap(Function.identity(), d -> new Double(d.getPageRank())));
+                .collect(toMap(Function.identity(), d -> new Double(d.getPageRank())));
     }
 
     private double getTermWeight(Document d, Map<DocField, Map<String, Double>> tfs, String t) {

@@ -20,16 +20,25 @@ public class FieldProcessor {
     }
 
     /**
+     * Generic method for splitting field.
+     * @param field
+     * @return
+     */
+    public static List<String> splitField(String field) {
+        if (field == null) {
+            return EMPTY_LIST;
+        }
+
+        return tokenize(field, WHITE_SPACE_REGEX);
+    }
+
+    /**
      * title must be in lowercased if not null.
      * @param title
      * @return
      */
     public static List<String> splitTitle(String title) {
-        if (title == null) {
-            return EMPTY_LIST;
-        }
-
-        return tokenize(title, WHITE_SPACE_REGEX);
+        return splitField(title);
     }
 
     public static List<String> splitHeaders(List<String> headers) {
@@ -40,7 +49,7 @@ public class FieldProcessor {
         List<String> headerWords = new ArrayList<>();
 
         for (String header : headers) {
-            headerWords.addAll(tokenize(header.toLowerCase(), WHITE_SPACE_REGEX));
+            headerWords.addAll(splitField(header));
         }
 
         return headerWords;
@@ -54,7 +63,7 @@ public class FieldProcessor {
         List<String> anchorWords = new ArrayList<>();
 
         for (String anchorText : anchors.keySet()) {
-            anchorWords.addAll(tokenize(anchorText.toLowerCase(), WHITE_SPACE_REGEX));
+            anchorWords.addAll(splitField(anchorText));
         }
 
         return anchorWords;
