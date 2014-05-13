@@ -19,7 +19,7 @@ public class NDCG {
                 query = strLine.substring(strLine.indexOf(":")+1).trim();
             } else {
                 String[] tokens = strLine.substring(strLine.indexOf(":")+1).trim().split(" ");
-                String url = tokens[0].trim();
+                String url = tokens[0].trim().toLowerCase();
                 double relevance = Double.parseDouble(tokens[1]);
                 if (relevance < 0) {
                     relevance = 0;
@@ -46,7 +46,7 @@ public class NDCG {
                     totalSum = getNDCGQuery(rels, totalSum);
                     rels.clear();
                 }
-                query = strLine.substring(strLine.indexOf(":")+1).trim();
+                query = strLine.substring(strLine.indexOf(":")+1).trim().toLowerCase();
                 totalQueries++;
             } else {
                 String url = strLine.substring(strLine.indexOf(":")+1).trim();
