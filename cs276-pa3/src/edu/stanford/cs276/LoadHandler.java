@@ -28,10 +28,10 @@ public class LoadHandler
             String value = tokens[1].trim();
 
             if (key.equals("query")) {
-                query = new Query(value.trim().toLowerCase());
+                query = new Query(value.trim());
                 queryDict.put(query, new HashMap<>());
             } else if (key.equals("url")) {
-                url = value.trim().toLowerCase();
+                url = value.trim();
                 queryDict.get(query).put(url, new Document(url));
             } else if (key.equals("title")) {
                 queryDict.get(query).get(url).setTitle(value);

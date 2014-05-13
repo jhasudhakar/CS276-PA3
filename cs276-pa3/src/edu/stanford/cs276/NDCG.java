@@ -19,7 +19,7 @@ public class NDCG {
                 query = strLine.substring(strLine.indexOf(":")+1).trim();
             } else {
                 String[] tokens = strLine.substring(strLine.indexOf(":")+1).trim().split(" ");
-                String url = tokens[0].trim().toLowerCase();
+                String url = tokens[0].trim();
                 double relevance = Double.parseDouble(tokens[1]);
                 if (relevance < 0) {
                     relevance = 0;
@@ -38,7 +38,6 @@ public class NDCG {
         int totalQueries = 0;
         ArrayList<Double> rels = new ArrayList<>();
         double totalSum = 0;
-        int success = 0, failure = 0;
 
         while ((strLine = br.readLine()) != null) {
             if (strLine.trim().charAt(0) == 'q') {
@@ -53,10 +52,8 @@ public class NDCG {
                 if (relScores.containsKey(query.hashCode() + url.hashCode())) {
                     double relevance = relScores.get(query.hashCode() + url.hashCode());
                     rels.add(relevance);
-                    ++success;
                 } else {
                     System.err.printf("Warning. Cannot find query %s with url %s in %s. Ignoring this line.\n", query, url, args[1]);
-                    ++failure;
                 }
             }
         }
@@ -67,8 +64,6 @@ public class NDCG {
             totalSum = getNDCGQuery(rels, totalSum);
         }
 
-        System.err.println("Relevant URLs: " + success);
-        System.err.println("Non-relevant URLS: " + failure);
         System.out.println(totalSum/totalQueries);
     }
 
