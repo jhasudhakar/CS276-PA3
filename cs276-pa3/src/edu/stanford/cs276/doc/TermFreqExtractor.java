@@ -33,7 +33,7 @@ public abstract class TermFreqExtractor {
      * @param q
      * @return
      */
-    public abstract Map<String, Double> extractFrom(Document d, Query q);
+    public abstract Map<String, Integer> extractFrom(Document d, Query q);
 
     // Helper methods
 
@@ -43,15 +43,15 @@ public abstract class TermFreqExtractor {
      * @param q
      * @return
      */
-    protected Map<String, Double> termFreqsFromField(List<String> fieldWords, Query q) {
+    protected Map<String, Integer> termFreqsFromField(List<String> fieldWords, Query q) {
         if (fieldWords.size() == 0) {
             return Collections.emptyMap();
         }
 
         Map<String, Integer> counts = MapUtility.count(fieldWords);
-        Map<String, Double> termFreqs = new HashMap<>();
+        Map<String, Integer> termFreqs = new HashMap<>();
         for (String qw : q.getQueryWords()) {
-            double tf = MapUtility.getWithFallback(counts, qw, 0);
+            int tf = MapUtility.getWithFallback(counts, qw, 0);
             termFreqs.put(qw, tf);
         }
 

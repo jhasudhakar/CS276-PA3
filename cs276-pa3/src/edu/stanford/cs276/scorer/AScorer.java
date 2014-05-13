@@ -44,12 +44,14 @@ public abstract class AScorer
      * @param q
      * @return
      */
-    public Map<DocField, Map<String, Double>> getDocTermFreqs(Document d, Query q) {
+    public Map<DocField, Map<String, Double>> getRawDocTermFreqs(Document d, Query q) {
         // map from tf type -> queryWord -> score
         Map<DocField, Map<String, Double>> tfs = new HashMap<>();
 
         for (DocField docField : DocField.values()) {
-            tfs.put(docField, TermFreqExtractor.getExtractor(docField).extractFrom(d, q));
+            TermFreqExtractor extractor = TermFreqExtractor.getExtractor(docField);
+            Map<String, Double> tf = MapUtility.toDoubleMap(extractor.extractFrom(d, q));
+            tfs.put(docField, tf);
         }
 
         return tfs;

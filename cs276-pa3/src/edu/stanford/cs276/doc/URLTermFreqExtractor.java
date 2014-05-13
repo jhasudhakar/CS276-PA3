@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class URLTermFreqExtractor extends TermFreqExtractor {
     @Override
-    public Map<String, Double> extractFrom(Document d, Query q) {
+    public Map<String, Integer> extractFrom(Document d, Query q) {
         List<String> urlWords = d.getFieldTokens(DocField.url);
         return termFreqsFromField(urlWords, q);
     }

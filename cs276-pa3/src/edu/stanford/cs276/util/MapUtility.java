@@ -39,17 +39,6 @@ public class MapUtility {
         return counts;
     }
 
-    public static <T> Map<T, Double> countAsDouble(Collection<T> collection) {
-        Map<T, Integer> rawCounts = count(collection);
-        Map<T, Double> counts = new HashMap<>();
-
-        for (Map.Entry<T, Integer> et : rawCounts.entrySet()) {
-            counts.put(et.getKey(), 1.0 * et.getValue());
-        }
-
-        return counts;
-    }
-
     /**
      * Apply op on each element in map.
      */
@@ -70,11 +59,25 @@ public class MapUtility {
         return map;
     }
 
-    public static Map<String, Double> magnify(Map<String, Double> counts, Integer factor) {
-        for (Map.Entry<String, Double> et : counts.entrySet()) {
+    public static Map<String,  Integer> magnify(Map<String, Integer> counts, Integer factor) {
+        for (Map.Entry<String,  Integer> et : counts.entrySet()) {
             et.setValue(et.getValue() * factor);
         }
 
         return counts;
+    }
+
+    /**
+     * Convert map of integer values to map of double values.
+     * @param intMap
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<T, Double> toDoubleMap(Map<T, Integer> intMap) {
+        Map<T, Double> newMap = new HashMap<>();
+        for (Map.Entry<T, Integer> et : intMap.entrySet()) {
+            newMap.put(et.getKey(), 1.0 * et.getValue());
+        }
+        return newMap;
     }
 }

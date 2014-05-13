@@ -67,7 +67,7 @@ public class CosineSimilarityScorer extends AScorer
     public double getSimScore(Document d, Query q)
     {
 
-        Map<DocField, Map<String, Double>> tfs = getDocTermFreqs(d, q);
+        Map<DocField, Map<String, Double>> tfs = getRawDocTermFreqs(d, q);
 
         normalizeTFs(tfs, d, q);
 

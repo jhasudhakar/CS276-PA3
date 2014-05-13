@@ -234,7 +234,7 @@ public class Document {
                     .stream()
                     .map(et -> {
                         List<String> tokens = FieldProcessor.splitField(et.getKey());
-                        return MapUtility.magnify(MapUtility.countAsDouble(tokens), et.getValue());
+                        return MapUtility.magnify(MapUtility.count(tokens), et.getValue());
                     })
                     .flatMap(m -> m.values().stream())
                     .mapToInt(x -> x.intValue())

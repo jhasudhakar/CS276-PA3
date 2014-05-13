@@ -141,7 +141,7 @@ public class BM25Scorer extends AScorer {
 
     @Override
     public double getSimScore(Document d, Query q) {
-        Map<DocField, Map<String, Double>> tfs = getDocTermFreqs(d, q);
+        Map<DocField, Map<String, Double>> tfs = getRawDocTermFreqs(d, q);
         Map<String, Double> tfQuery = getQueryFreqs(q);
 
         return tfQuery.keySet()

@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
  */
 public class AnchorTermFreqExtractor extends TermFreqExtractor {
     @Override
-    public Map<String, Double> extractFrom(Document d, Query q) {
+    public Map<String, Integer> extractFrom(Document d, Query q) {
         Map<String, Integer> anchors = d.getAnchors();
 
         if (anchors.size() == 0) {
             return Collections.emptyMap();
         }
 
-        Map<String, Double> counts = anchors.entrySet()
+        Map<String, Integer> counts = anchors.entrySet()
                 .stream()
                 .map(et -> {
                     List<String> tokens = FieldProcessor.splitField(et.getKey());
@@ -29,7 +29,7 @@ public class AnchorTermFreqExtractor extends TermFreqExtractor {
                 })
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
-                         Collectors.summingDouble(Map.Entry::getValue)));
+                         Collectors.summingInt(Map.Entry::getValue)));
 
         return counts;
     }
