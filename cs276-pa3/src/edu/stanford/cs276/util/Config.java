@@ -3,10 +3,7 @@ package edu.stanford.cs276.util;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.scorer.AScorer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -18,6 +15,16 @@ import java.util.Map;
 public class Config {
     public static void setParameters(AScorer scorer, String fileName) {
         BufferedReader br = null;
+
+        File file = new File(fileName);
+        try {
+            br = new BufferedReader(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            // let it go
+            // the user is too lazy to provde a config file
+            return;
+        }
+
         Field[] fields = scorer.getClass().getDeclaredFields();
         /* String -> DocField. */
         Map<String, DocField> stringDocFieldMap = new HashMap<>();
@@ -39,8 +46,6 @@ public class Config {
         }
 
         try {
-            File file = new File(fileName);
-            br = new BufferedReader(new FileReader(file));
             String line;
             /* Process one line at a time. */
             while ((line = br.readLine()) != null) {
