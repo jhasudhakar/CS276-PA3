@@ -19,7 +19,7 @@ public abstract class TermFreqExtractor {
         extractors = new HashMap<>();
         extractors.put(DocField.url, new URLTermFreqExtractor());
         extractors.put(DocField.title, new TitleTermFreqExtractor());
-        extractors.put(DocField.header, new TitleTermFreqExtractor());
+        extractors.put(DocField.header, new HeaderTermFreqExtractor());
         extractors.put(DocField.body, new BodyTermFreqExtractor());
         extractors.put(DocField.anchor, new AnchorTermFreqExtractor());
     }
