@@ -10,11 +10,13 @@ import java.util.Map;
  */
 public class IDF implements Serializable {
     private Map<String, Integer> termDocCounts;
+    private final int unseenTermDocCounts;
     private int totalDocCount;
 
     public IDF(Map<String, Integer> termDocCounts, int totalDocCount) {
         this.termDocCounts = termDocCounts;
         this.totalDocCount = totalDocCount;
+        this.unseenTermDocCounts = new Double(Math.round(Math.log(totalDocCount))).intValue();
     }
 
     /**
@@ -23,7 +25,7 @@ public class IDF implements Serializable {
      * @return
      */
     public double getValue(String term) {
-        int count = MapUtility.getWithFallback(termDocCounts, term, 0);
-        return 1.0 * (totalDocCount + 1) / (count + 1);
+        int count = MapUtility.getWithFallback(termDocCounts, term, unseenTermDocCounts);
+        return Math.log(1.0 * (totalDocCount + 1) / (count + 1));
     }
 }
