@@ -4,7 +4,10 @@ import edu.stanford.cs276.Document;
 import edu.stanford.cs276.Query;
 import edu.stanford.cs276.util.MapUtility;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Extract raw term frequencies from a certain field.
@@ -66,28 +69,4 @@ public abstract class TermFreqExtractor {
         return termFreqs;
     }
 
-    // tiny test
-    public static void main(String[] args) {
-        Document doc = new Document("http://math.stanford.edu/");
-        doc.setTitle("department of mathematics stanford university");
-
-        doc.addHeader("Stanford Math Department");
-        doc.addHeader("Latest publications in math");
-
-        Integer[] hits1 = {23, 44, 92, 159, 165};
-        doc.addBodyHits("stanford", Arrays.asList(hits1));
-        Integer[] hits2 = {97, 118};
-        doc.addBodyHits("2014", Arrays.asList(hits2));
-        doc.setBodyLength(251);
-
-        doc.addAnchor("http math stanford edu", 44);
-        doc.addAnchor("stanford math department", 9);
-        doc.end();
-
-        Query query = new Query("2014 math requirements stanford");
-        for (DocField docField : DocField.values()) {
-            TermFreqExtractor ae = TermFreqExtractor.getExtractor(docField);
-            System.out.println("Field " + docField + ": " + ae.getTermFreqs(doc, query));
-        }
-    }
 }
