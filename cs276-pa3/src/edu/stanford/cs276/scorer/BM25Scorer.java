@@ -6,10 +6,7 @@ import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.util.MapUtility;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static edu.stanford.cs276.util.Config.setParameters;
@@ -24,7 +21,6 @@ public class BM25Scorer extends AScorer {
     private double K1 = 1.0;
     private double lambda = 1.0;
     private double lambdaPrime = 1.0;
-
 
     // initialize weights
     static {
@@ -63,8 +59,6 @@ public class BM25Scorer extends AScorer {
 
         calcAverageLengths();
     }
-
-
 
     /**
      * Compute length of given field for every document.
@@ -114,12 +108,13 @@ public class BM25Scorer extends AScorer {
                 .collect(toMap(Function.identity(), d -> new Double(d.getPageRank())));
     }
 
-    private double getTermWeight(Document d, Map<DocField, Map<String, Double>> tfs, String t) {
+    private double getTermWeight(Document d, Map<DocField, Map<String, Double>> tfs, String t, Query q) {
         return Arrays.asList(DocField.values())
                 .stream()
                 .map(f -> {
                     double tf = MapUtility.getWithFallback(tfs.get(f), t, 0.0);
-                    double ftf = tf / (1 + Bf.get(f) * (lengths.get(f).get(d) / avgLengths.get(f) - 1));
+                    double denominator = 1 + Bf.get(f) * (lengths.get(f).get(d) / avgLengths.get(f) - 1);
+                    double ftf = denominator == 0.0 ? 0.0 : tf / denominator;
                     return Wf.get(f) * ftf;
                 })
                 .mapToDouble(x -> x)
@@ -135,14 +130,20 @@ public class BM25Scorer extends AScorer {
         Map<DocField, Map<String, Double>> tfs = getRawDocTermFreqs(d, q);
         Map<String, Double> tfQuery = getQueryFreqs(q);
 
-        return tfQuery.keySet()
+        double bm25 = tfQuery.keySet()
                 .stream()
                 .map(t -> {
                     double idf = idfs.getValue(t);
-                    double wdt = getTermWeight(d, tfs, t);
+                    double wdt = getTermWeight(d, tfs, t, q);
+                    if (wdt + K1 == 0.0) {
+                        return 0.0;
+                    }
                     return idf * wdt / (wdt + K1);
                 })
                 .mapToDouble(x -> x)
-                .sum() + lambda * V(d.getPageRank());
+                .sum();
+
+        double pagerank = lambda * V(d.getPageRank());
+        return bm25 + pagerank;
     }
 }
