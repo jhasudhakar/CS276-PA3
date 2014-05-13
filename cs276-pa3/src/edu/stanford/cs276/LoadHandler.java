@@ -132,11 +132,11 @@ public class LoadHandler
                 totalDocCount++;
 
                 BufferedReader reader = new BufferedReader(new FileReader(docFile));
-                // store terms in this document
+                // store unique terms in this document
                 Set<String> terms = new HashSet<>();
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    terms.addAll(Arrays.asList(line.trim().split("\\s+")));
+                    terms.addAll(Arrays.asList(line.trim().toLowerCase().split("\\s+")));
                 }
 
                 reader.close();
@@ -150,7 +150,7 @@ public class LoadHandler
             System.out.println("Finished processing " + blockDir.getName());
         }
 
-        System.out.println(totalDocCount);
+        System.out.println("#documents = " + totalDocCount);
 
         return new IDF(termDocCount, totalDocCount);
     }
