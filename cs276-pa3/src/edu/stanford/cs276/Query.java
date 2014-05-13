@@ -23,6 +23,11 @@ public class Query {
     }
 
     @Override
+    public String toString() {
+        return "Query<" + originalQuery + ">";
+    }
+
+    @Override
     public int hashCode() {
         return originalQuery.hashCode();
     }

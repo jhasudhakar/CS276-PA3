@@ -51,6 +51,9 @@ public class CosineSimilarityScorer extends AScorer
             score += fieldWeights.get(docField) * dotProduct(tfQuery, tfs.get(docField));
         }
 
+        //System.out.println(q);
+        //System.out.println(d);
+        //System.out.println("Score=" + score + "\n");
         return score;
     }
 
