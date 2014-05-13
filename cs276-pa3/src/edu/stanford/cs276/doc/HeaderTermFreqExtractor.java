@@ -1,7 +1,6 @@
 package edu.stanford.cs276.doc;
 
 import edu.stanford.cs276.Document;
-import edu.stanford.cs276.Query;
 
 import java.util.List;
 import java.util.Map;
@@ -11,8 +10,8 @@ import java.util.Map;
  */
 public class HeaderTermFreqExtractor extends TermFreqExtractor {
     @Override
-    public Map<String, Integer> extractFrom(Document d, Query q) {
+    public Map<String, Integer> getFieldTermFreqs(Document d) {
         List<String> headerWords = d.getFieldTokens(DocField.header);
-        return termFreqsFromField(headerWords, q);
+        return termFreqsFromField(headerWords);
     }
 }

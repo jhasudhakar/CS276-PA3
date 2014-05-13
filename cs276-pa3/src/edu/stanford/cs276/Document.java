@@ -103,7 +103,6 @@ public class Document {
         fieldTokens.put(DocField.url, FieldProcessor.splitURL(this.url));
         fieldTokens.put(DocField.title, FieldProcessor.splitTitle(this.title));
         fieldTokens.put(DocField.header, FieldProcessor.splitHeaders(this.headers));
-        fieldTokens.put(DocField.anchor, FieldProcessor.splitAnchors(this.anchors));
 
         // cache unique terms and position of each term in each field
         // cache the values to speed up future getWindow calls
@@ -219,7 +218,7 @@ public class Document {
     }
 
     public List<String> getFieldTokens(DocField f) {
-        if (f == DocField.body) {
+        if (f == DocField.body || f == DocField.anchor) {
             throw new IllegalStateException("Cannot get tokens of body.");
         }
 
@@ -237,7 +236,7 @@ public class Document {
                         return MapUtility.magnify(MapUtility.count(tokens), et.getValue());
                     })
                     .flatMap(m -> m.values().stream())
-                    .mapToInt(x -> x.intValue())
+                    .mapToInt(x -> x)
                     .sum();
         }
 

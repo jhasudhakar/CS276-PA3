@@ -48,7 +48,7 @@ public abstract class AScorer
 
         for (DocField docField : DocField.values()) {
             TermFreqExtractor extractor = TermFreqExtractor.getExtractor(docField);
-            Map<String, Double> tf = MapUtility.toDoubleMap(extractor.extractFrom(d, q));
+            Map<String, Double> tf = MapUtility.toDoubleMap(extractor.getTermFreqs(d, q));
             tfs.put(docField, tf);
         }
 

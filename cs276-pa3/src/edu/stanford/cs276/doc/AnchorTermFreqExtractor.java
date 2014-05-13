@@ -14,24 +14,22 @@ import java.util.stream.Collectors;
  */
 public class AnchorTermFreqExtractor extends TermFreqExtractor {
     @Override
-    public Map<String, Integer> extractFrom(Document d, Query q) {
+    public Map<String, Integer> getFieldTermFreqs(Document d) {
         Map<String, Integer> anchors = d.getAnchors();
 
         if (anchors.size() == 0) {
             return Collections.emptyMap();
         }
 
-        Map<String, Integer> counts = anchors.entrySet()
+        return anchors.entrySet()
                 .stream()
                 .map(et -> {
                     List<String> tokens = FieldProcessor.splitField(et.getKey());
-                    return MapUtility.magnify(termFreqsFromField(tokens, q), et.getValue());
+                    return MapUtility.magnify(termFreqsFromField(tokens), et.getValue());
                 })
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
                          Collectors.summingInt(Map.Entry::getValue)));
-
-        return counts;
     }
 
     // tiny test
@@ -43,6 +41,6 @@ public class AnchorTermFreqExtractor extends TermFreqExtractor {
 
         Query query = new Query("2014 math requirements stanford");
         TermFreqExtractor ae = TermFreqExtractor.getExtractor(DocField.anchor);
-        System.out.println(ae.extractFrom(doc, query));
+        System.out.println(ae.getTermFreqs(doc, query));
     }
 }

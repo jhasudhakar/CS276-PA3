@@ -1,7 +1,8 @@
 package edu.stanford.cs276;
 
+import edu.stanford.cs276.doc.FieldProcessor;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Query {
@@ -10,7 +11,7 @@ public class Query {
 
     public Query(String query) {
         originalQuery = query;
-        queryWords = new ArrayList<>(Arrays.asList(query.split(" ")));
+        queryWords = new ArrayList<>(FieldProcessor.splitField(query));
     }
 
     public List<String> getQueryWords() {

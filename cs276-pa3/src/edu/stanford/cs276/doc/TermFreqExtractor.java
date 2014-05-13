@@ -30,26 +30,34 @@ public abstract class TermFreqExtractor {
     /**
      * Compute raw term frequencies.
      * @param d
-     * @param q
      * @return
      */
-    public abstract Map<String, Integer> extractFrom(Document d, Query q);
+    protected abstract Map<String, Integer> getFieldTermFreqs(Document d);
+
+    public Map<String, Integer> getTermFreqs(Document d, Query q) {
+        Map<String, Integer> counts = getFieldTermFreqs(d);
+        return filterByQueryTerms(counts, q);
+    }
+
 
     // Helper methods
 
     /**
      * Count fieldWords and filter out query terms.
      * @param fieldWords
-     * @param q
      * @return
      */
-    protected Map<String, Integer> termFreqsFromField(List<String> fieldWords, Query q) {
+    protected Map<String, Integer> termFreqsFromField(List<String> fieldWords) {
         if (fieldWords.size() == 0) {
             return Collections.emptyMap();
         }
 
-        Map<String, Integer> counts = MapUtility.count(fieldWords);
+        return MapUtility.count(fieldWords);
+    }
+
+    protected Map<String, Integer> filterByQueryTerms(Map<String, Integer> counts, Query q) {
         Map<String, Integer> termFreqs = new HashMap<>();
+
         for (String qw : q.getQueryWords()) {
             int tf = MapUtility.getWithFallback(counts, qw, 0);
             termFreqs.put(qw, tf);

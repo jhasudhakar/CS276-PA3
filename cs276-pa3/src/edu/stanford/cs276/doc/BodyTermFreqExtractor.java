@@ -1,7 +1,6 @@
 package edu.stanford.cs276.doc;
 
 import edu.stanford.cs276.Document;
-import edu.stanford.cs276.Query;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +12,7 @@ import java.util.Map;
  */
 public class BodyTermFreqExtractor extends TermFreqExtractor {
     @Override
-    public Map<String, Integer> extractFrom(Document d, Query q) {
+    public Map<String, Integer> getFieldTermFreqs(Document d) {
         Map<String, List<Integer>> bodyHits = d.getBodyHits();
         if (bodyHits.size() == 0) {
             return Collections.emptyMap();
