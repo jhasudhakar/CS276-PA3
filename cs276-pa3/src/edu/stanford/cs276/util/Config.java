@@ -21,7 +21,7 @@ public class Config {
             br = new BufferedReader(new FileReader(file));
         } catch (FileNotFoundException e) {
             // let it go
-            // the user is too lazy to provde a config file
+            // the user is too lazy to provide a config file
             return;
         }
 
