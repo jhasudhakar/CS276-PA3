@@ -14,6 +14,7 @@ import static java.util.stream.Collectors.toSet;
 public class Document {
     // fields
     // all fields are trimmed and in lowercase
+    private String originalURL = null;
     private String url = null;
     private String title = null;
     private List<String> headers = new ArrayList<>();
@@ -34,6 +35,7 @@ public class Document {
     private List<Pair<Integer, String>> bodyTermPositions;
 
     public Document(String url) {
+        this.originalURL = url;
         this.url = normalize(url);
         this.fieldTokens = new HashMap<>();
         this.possibleWindows = new ArrayList<>();
@@ -57,6 +59,10 @@ public class Document {
 
     public int getBodyLength() {
         return bodyLength;
+    }
+
+    public String getOriginalURL() {
+        return originalURL;
     }
 
     public void addHeader(String header) {
