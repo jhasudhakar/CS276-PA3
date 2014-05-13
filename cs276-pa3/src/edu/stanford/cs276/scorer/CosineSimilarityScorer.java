@@ -44,8 +44,7 @@ public class CosineSimilarityScorer extends AScorer
     }
 
     public double getNetScore(Map<DocField, Map<String, Double>> tfs, Query q,
-                              Map<String, Double> tfQuery, Document d)
-    {
+                              Map<String, Double> tfQuery, Document d) {
         double score = 0.0;
 
         for (DocField docField : DocField.values()) {
@@ -56,16 +55,14 @@ public class CosineSimilarityScorer extends AScorer
     }
 
 
-    public void normalizeTFs(Map<DocField, Map<String, Double>> tfs, Document d, Query q)
-    {
+    public void normalizeTFs(Map<DocField, Map<String, Double>> tfs, Document d, Query q) {
         for (Map<String, Double> tf : tfs.values()) {
             lengthNormalize(sublinear(tf), d, q);
         }
     }
 
     @Override
-    public double getSimScore(Document d, Query q)
-    {
+    public double getSimScore(Document d, Query q) {
 
         Map<DocField, Map<String, Double>> tfs = getRawDocTermFreqs(d, q);
 

@@ -13,8 +13,7 @@ import java.util.Map;
 public abstract class AScorer 
 {
     protected IDF idfs;
-    public AScorer(IDF idfs)
-    {
+    public AScorer(IDF idfs) {
         this.idfs = idfs;
     }
 
@@ -22,8 +21,7 @@ public abstract class AScorer
     public abstract double getSimScore(Document d, Query q);
 
     // handle the query vector
-    public Map<String, Double> getQueryFreqs(Query q)
-    {
+    public Map<String, Double> getQueryFreqs(Query q) {
         // get term frequency
         Map<String, Integer> counts = MapUtility.count(q.getQueryWords());
 
