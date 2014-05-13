@@ -122,6 +122,9 @@ public class BM25Scorer extends AScorer {
     }
 
     private double V(int pageRank) {
+        if (lambdaPrime < 1.0) {
+            throw new IllegalStateException("lambdaPrime should be >= 1");
+        }
         return Math.log(pageRank + lambdaPrime);
     }
 
