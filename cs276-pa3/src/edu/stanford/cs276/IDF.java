@@ -25,7 +25,7 @@ public class IDF implements Serializable {
      * @return
      */
     public double getValue(String term) {
-        int count = MapUtility.getWithFallback(termDocCounts, term, unseenTermDocCounts);
-        return Math.log(1.0 * (totalDocCount + 1) / (count + 1));
+        int count = MapUtility.getWithFallback(termDocCounts, term, 0);
+        return 1.0 * (totalDocCount + 1) / (count + 1);
     }
 }

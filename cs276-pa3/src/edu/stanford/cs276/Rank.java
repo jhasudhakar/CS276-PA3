@@ -34,11 +34,14 @@ public class Rank  {
         // put completed rankings here
         Map<Query, List<String>> queryRankings = new HashMap<>();
 
-        for (Query query : queryDict.keySet()) {
+        for (Map.Entry<Query, Map<String, Document>> et : queryDict.entrySet()) {
+            Query query = et.getKey();
+            Map<String, Document> documents = et.getValue();
+
             // loop through urls for query, getting scores
-            List<Pair<String, Double>> urlAndScores = new ArrayList<>(queryDict.get(query).size());
-            for (String url : queryDict.get(query).keySet()) {
-                double score = scorer.getSimScore(queryDict.get(query).get(url), query);
+            List<Pair<String, Double>> urlAndScores = new ArrayList<>(documents.size());
+            for (String url : documents.keySet()) {
+                double score = scorer.getSimScore(documents.get(url), query);
                 urlAndScores.add(new Pair<>(url, score));
             }
 

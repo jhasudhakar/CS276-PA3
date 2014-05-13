@@ -17,7 +17,9 @@ public class LoadHandler
 
         BufferedReader reader = new BufferedReader(new FileReader(feature_file));
         String line = null, url= null, anchor_text = null;
-        Query query = null;
+        Query currentQuery = null;
+        Map<String, Document> currentDocuments = null;
+        Document currentDocument = null;
 
         /* feature dictionary: Query -> (url -> Document)  */
         Map<Query, Map<String, Document>> queryDict = new HashMap<>();
@@ -28,15 +30,17 @@ public class LoadHandler
             String value = tokens[1].trim();
 
             if (key.equals("query")) {
-                query = new Query(value.trim());
-                queryDict.put(query, new HashMap<>());
+                currentQuery = new Query(value.trim());
+                currentDocuments = new HashMap<>();
+                queryDict.put(currentQuery, currentDocuments);
             } else if (key.equals("url")) {
                 url = value.trim();
-                queryDict.get(query).put(url, new Document(url));
+                currentDocument = new Document(url);
+                currentDocuments.put(url, currentDocument);
             } else if (key.equals("title")) {
-                queryDict.get(query).get(url).setTitle(value);
+                currentDocument.setTitle(value);
             } else if (key.equals("header")) {
-                queryDict.get(query).get(url).addHeader(value);
+                currentDocument.addHeader(value);
             } else if (key.equals("body_hits")) {
                 String[] temp = value.split(" ", 2);
                 String term = temp[0].trim();
@@ -45,15 +49,15 @@ public class LoadHandler
                         .map(pos -> Integer.parseInt(pos))
                         .collect(Collectors.toList());
 
-                queryDict.get(query).get(url).addBodyHits(term, positions);
+                currentDocument.addBodyHits(term, positions);
             } else if (key.equals("body_length")) {
-                queryDict.get(query).get(url).setBodyLength(Integer.parseInt(value));
+                currentDocument.setBodyLength(Integer.parseInt(value));
             } else if (key.equals("pagerank")) {
-                    queryDict.get(query).get(url).setPageRank(Integer.parseInt(value));
+                currentDocument.setPageRank(Integer.parseInt(value));
             } else if (key.equals("anchor_text")) {
                 anchor_text = value.trim();
             } else if (key.equals("stanford_anchor_count")) {
-                queryDict.get(query).get(url).addAnchor(anchor_text, Integer.parseInt(value));
+                currentDocument.addAnchor(anchor_text, Integer.parseInt(value));
             }
         }
 
