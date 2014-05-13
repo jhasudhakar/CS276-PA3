@@ -9,10 +9,13 @@ import edu.stanford.cs276.util.MapUtility;
 import java.util.HashMap;
 import java.util.Map;
 
+import static edu.stanford.cs276.util.Config.setParameters;
+
 public class CosineSimilarityScorer extends AScorer
 {
     private static double SMOOTH_BODY_LENGTH = 500;
     private static Map<DocField, Double> fieldWeights;
+    final private static String CONFIG = "cosine.config";
 
     static {
         fieldWeights = new HashMap<>();
@@ -25,6 +28,8 @@ public class CosineSimilarityScorer extends AScorer
 
     public CosineSimilarityScorer(IDF idfs) {
         super(idfs);
+
+        setParameters(this, CONFIG);
     }
 
     /**
