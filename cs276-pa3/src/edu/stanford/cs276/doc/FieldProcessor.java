@@ -8,7 +8,6 @@ import java.util.*;
 public class FieldProcessor {
     protected static final String NON_WORD_REGEX = "\\W+";
     protected static final String WHITE_SPACE_REGEX = "\\s+";
-    public static List<String> EMPTY_LIST = Collections.unmodifiableList(new ArrayList<>());
 
     /**
      * URL most not be null.
@@ -26,7 +25,7 @@ public class FieldProcessor {
      */
     public static List<String> splitField(String field) {
         if (field == null) {
-            return EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return tokenize(field, WHITE_SPACE_REGEX);
@@ -43,7 +42,7 @@ public class FieldProcessor {
 
     public static List<String> splitHeaders(List<String> headers) {
         if (headers.size() == 0) {
-            return EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<String> headerWords = new ArrayList<>();
@@ -57,7 +56,7 @@ public class FieldProcessor {
 
     public static List<String> splitAnchors(Map<String, Integer> anchors) {
         if (anchors.size() == 0) {
-            return EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<String> anchorWords = new ArrayList<>();

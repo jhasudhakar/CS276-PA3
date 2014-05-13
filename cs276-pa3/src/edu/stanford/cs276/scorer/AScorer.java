@@ -13,8 +13,7 @@ import java.util.Map;
 public abstract class AScorer 
 {
     protected IDF idfs;
-    public AScorer(IDF idfs)
-    {
+    public AScorer(IDF idfs) {
         this.idfs = idfs;
     }
 
@@ -22,8 +21,7 @@ public abstract class AScorer
     public abstract double getSimScore(Document d, Query q);
 
     // handle the query vector
-    public Map<String, Double> getQueryFreqs(Query q)
-    {
+    public Map<String, Double> getQueryFreqs(Query q) {
         // get term frequency
         Map<String, Integer> counts = MapUtility.count(q.getQueryWords());
 
@@ -44,12 +42,14 @@ public abstract class AScorer
      * @param q
      * @return
      */
-    public Map<DocField, Map<String, Double>> getDocTermFreqs(Document d, Query q) {
+    public Map<DocField, Map<String, Double>> getRawDocTermFreqs(Document d, Query q) {
         // map from tf type -> queryWord -> score
         Map<DocField, Map<String, Double>> tfs = new HashMap<>();
 
         for (DocField docField : DocField.values()) {
-            tfs.put(docField, TermFreqExtractor.getExtractor(docField).extractFrom(d, q));
+            TermFreqExtractor extractor = TermFreqExtractor.getExtractor(docField);
+            Map<String, Double> tf = MapUtility.toDoubleMap(extractor.extractFrom(d, q));
+            tfs.put(docField, tf);
         }
 
         return tfs;

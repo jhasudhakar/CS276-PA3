@@ -2,6 +2,7 @@ package edu.stanford.cs276;
 
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.doc.FieldProcessor;
+import edu.stanford.cs276.util.MapUtility;
 import edu.stanford.cs276.util.Pair;
 
 import java.util.*;
@@ -40,6 +41,10 @@ public class Document {
 
     private static String normalize(String s) {
         return s.trim().toLowerCase();
+    }
+
+    public Map<String, Integer> getAnchors() {
+        return anchors;
     }
 
     public Map<String, List<Integer>> getBodyHits() {
@@ -224,6 +229,16 @@ public class Document {
     public int getNumFieldTokens(DocField f) {
         if (f == DocField.body) {
             return this.bodyLength;
+        } else if (f == DocField.anchor) {
+            return anchors.entrySet()
+                    .stream()
+                    .map(et -> {
+                        List<String> tokens = FieldProcessor.splitField(et.getKey());
+                        return MapUtility.magnify(MapUtility.count(tokens), et.getValue());
+                    })
+                    .flatMap(m -> m.values().stream())
+                    .mapToInt(x -> x.intValue())
+                    .sum();
         }
 
         return fieldTokens.get(f).size();

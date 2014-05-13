@@ -72,8 +72,7 @@ public class LoadHandler
      * Load IDF data from file.
      * @return
      */
-    public static IDF loadIDFs()
-    {
+    public static IDF loadIDFs() {
         IDF IDF;
 
         try {

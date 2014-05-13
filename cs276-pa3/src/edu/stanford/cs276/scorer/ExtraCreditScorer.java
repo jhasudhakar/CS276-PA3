@@ -7,8 +7,7 @@ import edu.stanford.cs276.Query;
 public class ExtraCreditScorer extends AScorer
 {
 
-    public ExtraCreditScorer(IDF idfs)
-    {
+    public ExtraCreditScorer(IDF idfs) {
         super(idfs);
     }
 

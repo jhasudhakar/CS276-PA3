@@ -58,4 +58,26 @@ public class MapUtility {
 
         return map;
     }
+
+    public static Map<String,  Integer> magnify(Map<String, Integer> counts, Integer factor) {
+        for (Map.Entry<String,  Integer> et : counts.entrySet()) {
+            et.setValue(et.getValue() * factor);
+        }
+
+        return counts;
+    }
+
+    /**
+     * Convert map of integer values to map of double values.
+     * @param intMap
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<T, Double> toDoubleMap(Map<T, Integer> intMap) {
+        Map<T, Double> newMap = new HashMap<>();
+        for (Map.Entry<T, Integer> et : intMap.entrySet()) {
+            newMap.put(et.getKey(), 1.0 * et.getValue());
+        }
+        return newMap;
+    }
 }

@@ -6,25 +6,24 @@ import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
 import edu.stanford.cs276.util.MapUtility;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
-import static java.util.stream.Collectors.*;
 
 import static edu.stanford.cs276.util.Config.setParameters;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class BM25Scorer extends AScorer {
     // static variables (parameters)
+    private final static String CONFIG = "bm25.config";
     private static Map<DocField, Double> Bf;
     private static Map<DocField, Double> Wf;
-    final private static String CONFIG = "bm25.config";
-    private double K1 = 1;
-    private double lambda = 1;
-    private double lambdaPrime = 1;
+    private double K1 = 1.0;
+    private double lambda = 1.0;
+    private double lambdaPrime = 1.0;
 
 
     // initialize weights
@@ -133,7 +132,7 @@ public class BM25Scorer extends AScorer {
 
     @Override
     public double getSimScore(Document d, Query q) {
-        Map<DocField, Map<String, Double>> tfs = getDocTermFreqs(d, q);
+        Map<DocField, Map<String, Double>> tfs = getRawDocTermFreqs(d, q);
         Map<String, Double> tfQuery = getQueryFreqs(q);
 
         return tfQuery.keySet()
