@@ -1,7 +1,6 @@
 package edu.stanford.cs276.doc;
 
 import edu.stanford.cs276.Document;
-import edu.stanford.cs276.Query;
 import edu.stanford.cs276.util.MapUtility;
 
 import java.util.Collections;
@@ -30,17 +29,5 @@ public class AnchorTermFreqExtractor extends TermFreqExtractor {
                 .flatMap(m -> m.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
                          Collectors.summingInt(Map.Entry::getValue)));
-    }
-
-    // tiny test
-    public static void main(String[] args) {
-        Document doc = new Document("http://localhost");
-        doc.addAnchor("http math stanford edu", 44);
-        doc.addAnchor("stanford math department", 9);
-        doc.end();
-
-        Query query = new Query("2014 math requirements stanford");
-        TermFreqExtractor ae = TermFreqExtractor.getExtractor(DocField.anchor);
-        System.out.println(ae.getTermFreqs(doc, query));
     }
 }
