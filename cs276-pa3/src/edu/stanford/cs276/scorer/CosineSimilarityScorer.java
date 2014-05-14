@@ -65,7 +65,8 @@ public class CosineSimilarityScorer extends AScorer
 
     public void normalizeTFs(Map<DocField, Map<String, Double>> tfs, Document d, Query q) {
         for (Map<String, Double> tf : tfs.values()) {
-            lengthNormalize(sublinear(tf), d, q);
+            // lengthNormalize(sublinear(tf), d, q);
+            lengthNormalize(tf, d, q);
         }
     }
 
