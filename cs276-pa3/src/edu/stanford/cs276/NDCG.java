@@ -4,21 +4,38 @@ import java.io.*;
 import java.util.*;
 
 public class NDCG {
+    private static HashMap<Integer, Double> relScores;
+
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Not enough arguments!");
             System.exit(1);
         }
 
-        HashMap<Integer, Double> relScores = new HashMap<>();
-        BufferedReader br = new BufferedReader(new FileReader(args[1]));
+        FileReader relFileReader = new FileReader(args[1]);
+        loadRelScores(relFileReader);
+
+        Reader outputReader;
+        if (args[0].equals("-")) {
+            outputReader = new InputStreamReader(System.in);
+        } else {
+            outputReader = new FileReader(args[0]);
+        }
+
+        double ndcg = computeNDCG(outputReader);
+        System.out.println(ndcg);
+    }
+
+    public static void loadRelScores(Reader reader) throws IOException {
+        relScores = new HashMap<>();
+        BufferedReader br = new BufferedReader(reader);
         String strLine;
         String query = "";
         while ((strLine = br.readLine()) != null) {
             if (strLine.trim().charAt(0) == 'q') {
-                query = strLine.substring(strLine.indexOf(":")+1).trim();
+                query = strLine.substring(strLine.indexOf(":") + 1).trim();
             } else {
-                String[] tokens = strLine.substring(strLine.indexOf(":")+1).trim().split(" ");
+                String[] tokens = strLine.substring(strLine.indexOf(":") + 1).trim().split(" ");
                 String url = tokens[0].trim();
                 double relevance = Double.parseDouble(tokens[1]);
                 if (relevance < 0) {
@@ -28,16 +45,16 @@ public class NDCG {
             }
         }
         br.close();
+    }
 
-        if (args[0].equals("-")) {
-            br = new BufferedReader(new InputStreamReader(System.in));
-        } else {
-            br = new BufferedReader(new FileReader(args[0]));
-        }
+    public static double computeNDCG(Reader reader) throws IOException {
+        BufferedReader br = new BufferedReader(reader);
 
         int totalQueries = 0;
         ArrayList<Double> rels = new ArrayList<>();
         double totalSum = 0;
+        String strLine;
+        String query = "";
 
         while ((strLine = br.readLine()) != null) {
             if (strLine.trim().charAt(0) == 'q') {
@@ -53,7 +70,7 @@ public class NDCG {
                     double relevance = relScores.get(query.hashCode() + url.hashCode());
                     rels.add(relevance);
                 } else {
-                    System.err.printf("Warning. Cannot find query %s with url %s in %s. Ignoring this line.\n", query, url, args[1]);
+                    System.err.printf("Warning. Cannot find query %s with url %s. Ignoring this line.\n", query, url);
                 }
             }
         }
@@ -64,7 +81,7 @@ public class NDCG {
             totalSum = getNDCGQuery(rels, totalSum);
         }
 
-        System.out.println(totalSum/totalQueries);
+        return totalSum / totalQueries;
     }
 
     private static double getNDCGQuery(ArrayList<Double> rels, double totalSum) {

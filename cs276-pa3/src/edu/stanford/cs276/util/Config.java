@@ -14,16 +14,18 @@ import java.util.Map;
  */
 public class Config {
     public static void setParameters(AScorer scorer, String fileName) {
-        BufferedReader br = null;
-
         File file = new File(fileName);
         try {
-            br = new BufferedReader(new FileReader(file));
+            setParameters(scorer, new FileReader(file));
         } catch (FileNotFoundException e) {
             // let it go
             // the user is too lazy to provide a config file
             return;
         }
+    }
+
+    public static void setParameters(AScorer scorer, Reader reader) {
+        BufferedReader br = new BufferedReader(reader);
 
         Field[] fields = scorer.getClass().getDeclaredFields();
         /* String -> DocField. */
