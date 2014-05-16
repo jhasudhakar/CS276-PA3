@@ -15,7 +15,7 @@ public class Rank  {
     private static Set<String> validScoreTypes = new HashSet<>(Arrays.asList(
             new String[]{"baseline", "cosine", "bm25", "extra", "window"}));
 
-    private static Map<Query, List<String>> score(Map<Query, Map<String, Document>> queryDict,
+    public static Map<Query, List<String>> score(Map<Query, Map<String, Document>> queryDict,
                                                   AScorer scorer, IDF idfs) {
         // put completed rankings here
         Map<Query, List<String>> queryRankings = new HashMap<>();
