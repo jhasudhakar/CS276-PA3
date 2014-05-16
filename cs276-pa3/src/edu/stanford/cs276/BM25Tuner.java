@@ -4,6 +4,7 @@ import edu.stanford.cs276.scorer.AScorer;
 import edu.stanford.cs276.scorer.BM25Scorer;
 import edu.stanford.cs276.util.Config;
 import edu.stanford.cs276.util.Pair;
+import edu.stanford.cs276.util.SerializationHelper;
 
 import java.io.*;
 import java.util.*;
@@ -70,15 +71,9 @@ public class BM25Tuner {
         // save good config upon shutdown
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                try {
-                    long unixTime = System.currentTimeMillis() / 1000L;
-                    String fileName = String.format("bm25-good-config-%d.ser", unixTime);
-                    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
-                    oos.writeObject(goodConfigs);
-                    oos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                long unixTime = System.currentTimeMillis() / 1000L;
+                String fileName = String.format("bm25-good-config-%d.ser", unixTime);
+                SerializationHelper.saveObjectToFile(goodConfigs, fileName);
             }
         });
 

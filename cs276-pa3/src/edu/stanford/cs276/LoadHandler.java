@@ -1,6 +1,7 @@
 package edu.stanford.cs276;
 
 import edu.stanford.cs276.util.MapUtility;
+import edu.stanford.cs276.util.SerializationHelper;
 
 import java.io.*;
 import java.util.*;
@@ -77,33 +78,11 @@ public class LoadHandler
      * @return
      */
     public static IDF loadIDFs() {
-        IDF IDF;
-
-        try {
-            FileInputStream fis = new FileInputStream(Config.IDF_FILE);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            IDF = (IDF) ois.readObject();
-            ois.close();
-            fis.close();
-        }
-        catch(IOException | ClassNotFoundException ioe) {
-            ioe.printStackTrace();
-            return null;
-        }
-
-        return IDF;
+        return (IDF) SerializationHelper.loadObjectFromFile(Config.IDF_FILE);
     }
 
     public static void saveIDFs(IDF IDF) {
-        try {
-            FileOutputStream fos = new FileOutputStream(Config.IDF_FILE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(IDF);
-            oos.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SerializationHelper.saveObjectToFile(IDF, Config.IDF_FILE);
     }
 
     /**
