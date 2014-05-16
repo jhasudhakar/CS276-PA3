@@ -6,8 +6,10 @@ import edu.stanford.cs276.util.Config;
 import edu.stanford.cs276.util.Pair;
 import edu.stanford.cs276.util.SerializationHelper;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.StringReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by kavinyao on 5/15/14.
@@ -137,5 +139,58 @@ public class BM25Tuner {
         }
 
         return sb.toString();
+    }
+
+    public static class ResultViewer {
+        public static void main(String[] args) {
+            if (args.length < 1) {
+                System.err.println("Not enough argument!");
+                return;
+            }
+
+            List<Pair<Map<String, Double>, Double>> goodConfigs =
+                    (List<Pair<Map<String, Double>, Double>>)
+                            SerializationHelper.loadObjectFromFile(args[0]);
+
+            List<String> orderedKeys = null;
+            if (goodConfigs.size() > 0) {
+                orderedKeys = goodConfigs
+                        .get(0)
+                        .getFirst()
+                        .keySet()
+                        .stream()
+                        .sorted()
+                        .collect(Collectors.toList());
+
+                System.out.print("NDCG\t");
+                for (String key : orderedKeys) {
+                    if (key.length() < 6) {
+                        System.out.print(key + "\t");
+                    } else {
+                        System.out.print(key.substring(0, 6) + "\t");
+                    }
+                }
+                System.out.println();
+
+                int fields = orderedKeys.size() + 1;
+                // http://stackoverflow.com/a/4903603
+                String bars = new String(new char[fields]).replace("\0", "--------");
+                System.out.println(bars);
+            }
+
+            Collections.sort(goodConfigs, (p1, p2) -> {
+                return -p1.getSecond().compareTo(p2.getSecond());
+            });
+
+            for (Pair<Map<String, Double>, Double> config : goodConfigs) {
+                System.out.print(String.format("%.4f\t", config.getSecond()));
+
+                Map<String, Double> params = config.getFirst();
+                for (String key : orderedKeys) {
+                    System.out.print(String.format("%.4f\t", params.get(key)));
+                }
+                System.out.println();
+            }
+        }
     }
 }
