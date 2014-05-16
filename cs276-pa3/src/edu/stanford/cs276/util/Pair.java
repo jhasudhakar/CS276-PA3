@@ -1,12 +1,14 @@
 package edu.stanford.cs276.util;
 
 
+import java.io.Serializable;
+
 /**
  * A generic-typed pair of objects.
  * 
  * @author Dan Klein
  */
-public class Pair<F, S> {
+public class Pair<F, S> implements Serializable {
     private F first;
     private S second;
 

@@ -3,13 +3,10 @@ package edu.stanford.cs276;
 import edu.stanford.cs276.scorer.AScorer;
 import edu.stanford.cs276.scorer.BM25Scorer;
 import edu.stanford.cs276.util.Config;
+import edu.stanford.cs276.util.Pair;
 
-import java.io.FileReader;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by kavinyao on 5/15/14.
@@ -21,21 +18,25 @@ public class BM25Tuner {
     static {
         paramRanges = new HashMap<>();
 
-        paramRanges.put("Bf#anchor", new double[]{0.0, 1.5});
-        paramRanges.put("Bf#body", new double[]{0.0, 1.5});
-        paramRanges.put("Bf#header", new double[]{0.0, 1.5});
-        paramRanges.put("Bf#title", new double[]{0.0, 1.5});
-        paramRanges.put("Bf#url", new double[]{0.0, 1.5});
+        paramRanges.put("Bf#anchor", new double[]{0.0, 1.1});
+        paramRanges.put("Bf#body", new double[]{0.2, 1.1});
+        paramRanges.put("Bf#header", new double[]{0.2, 1.1});
+        paramRanges.put("Bf#title", new double[]{0.2, 1.2});
+        paramRanges.put("Bf#url", new double[]{0.3, 1.6});
 
         paramRanges.put("Wf#anchor", new double[]{1.0, 6.0});
         paramRanges.put("Wf#body", new double[]{1.0, 6.0});
         paramRanges.put("Wf#header", new double[]{1.0, 6.0});
-        paramRanges.put("Wf#title", new double[]{1.0, 6.0});
+        paramRanges.put("Wf#title", new double[]{1.0, 7.0});
         paramRanges.put("Wf#url", new double[]{1.0, 6.0});
 
-        paramRanges.put("K1", new double[]{1.0, 50.0});
-        paramRanges.put("lambda", new double[]{0.0, 1.5});
-        paramRanges.put("lambdaPrime", new double[]{1.0, 4.0});
+        paramRanges.put("K1", new double[]{30.0, 50.0});
+        paramRanges.put("lambda", new double[]{1.0, 5.0});
+        paramRanges.put("lambdaPrime", new double[]{1.0, 6.0});
+    }
+
+    private static double round(double value) {
+        return (double)Math.round(value * 100) / 100;
     }
 
     private static Map<String, Double> generateRandomConfig() {
@@ -43,7 +44,7 @@ public class BM25Tuner {
 
         for (Map.Entry<String, double[]> et : paramRanges.entrySet()) {
             double[] range = et.getValue();
-            double val = range[0] + (range[1] - range[0]) * R.nextDouble();
+            double val = round(range[0] + (range[1] - range[0]) * R.nextDouble());
             config.put(et.getKey(), val);
         }
 
@@ -53,7 +54,7 @@ public class BM25Tuner {
     private static String readableConfig(Map<String, Double> config) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Double> et : config.entrySet()) {
-            sb.append(String.format("%s=%f\n", et.getKey(), et.getValue()));
+            sb.append(String.format("%s=%.2f\n", et.getKey(), et.getValue()));
         }
         return sb.toString();
     }
@@ -64,10 +65,20 @@ public class BM25Tuner {
             return;
         }
 
+        List<Pair<Map<String, Double>, Double>> goodConfigs = new ArrayList<>();
+
         // save good config upon shutdown
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.out.println("Wow");
+                try {
+                    long unixTime = System.currentTimeMillis() / 1000L;
+                    String fileName = String.format("bm25-good-config-%d.ser", unixTime);
+                    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
+                    oos.writeObject(goodConfigs);
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -84,18 +95,41 @@ public class BM25Tuner {
         // create scorer
         AScorer scorer = new BM25Scorer(idfs, queryDict);
 
-        // generate random config
-        Map<String, Double> config = generateRandomConfig();
-        StringReader stringReader = new StringReader(readableConfig(config));
-        // load custom config
-        Config.setParameters(scorer, stringReader);
+        Set<String> uniqeConfigs = new HashSet<>();
 
-        // score documents for queries
-        Map<Query, List<String>> queryRankings = Rank.score(queryDict, scorer, idfs);
+        // run forever
+        while (true) {
+            // generate random config
+            Map<String, Double> config = generateRandomConfig();
+            String configString = readableConfig(config);
 
-        // evalute result
-        String s = generateResultString(queryRankings);
-        System.out.println(NDCG.computeNDCG(new StringReader(s)));
+            // avoid duplicate
+            if (uniqeConfigs.contains(configString)) {
+                continue;
+            }
+            uniqeConfigs.add(configString);
+
+            // load custom config
+            StringReader stringReader = new StringReader(configString);
+            Config.setParameters(scorer, stringReader);
+
+            // score documents for queries
+            Map<Query, List<String>> queryRankings = Rank.score(queryDict, scorer, idfs);
+
+            // evalute result
+            String s = generateResultString(queryRankings);
+            double ndcg = NDCG.computeNDCG(new StringReader(s));
+
+            // save good config
+            if (ndcg > 0.885) {
+                if (ndcg > 0.888) {
+                    System.out.println("!!!!!! " + ndcg);
+                } else {
+                    System.out.println(ndcg);
+                }
+                goodConfigs.add(new Pair<>(config, ndcg));
+            }
+        }
     }
 
     public static String generateResultString(Map<Query, List<String>> queryRankings) {
