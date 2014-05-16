@@ -16,21 +16,7 @@ public class Rank  {
             new String[]{"baseline", "cosine", "bm25", "extra", "window"}));
 
     private static Map<Query, List<String>> score(Map<Query, Map<String, Document>> queryDict,
-                                                  String scoreType, IDF idfs) {
-        AScorer scorer = null;
-
-        if (scoreType.equals("baseline")) {
-            scorer = new BaselineScorer();
-        } else if (scoreType.equals("cosine")) {
-            scorer = new CosineSimilarityScorer(idfs);
-        } else if (scoreType.equals("bm25")) {
-            scorer = new BM25Scorer(idfs, queryDict);
-        } else if (scoreType.equals("window")) {
-            scorer = new SmallestWindowScorer(idfs);
-        } else if (scoreType.equals("extra")) {
-            scorer = new ExtraCreditScorer(idfs);
-        }
-
+                                                  AScorer scorer, IDF idfs) {
         // put completed rankings here
         Map<Query, List<String>> queryRankings = new HashMap<>();
 
@@ -120,7 +106,6 @@ public class Rank  {
     }
 
     public static void main(String[] args) throws IOException {
-
         IDF idfs = LoadHandler.loadIDFs();
 
         if (args.length < 2) {
@@ -144,14 +129,24 @@ public class Rank  {
             e.printStackTrace();
         }
 
+        AScorer scorer = null;
+
+        if (scoreType.equals("baseline")) {
+            scorer = new BaselineScorer();
+        } else if (scoreType.equals("cosine")) {
+            scorer = new CosineSimilarityScorer(idfs);
+        } else if (scoreType.equals("bm25")) {
+            scorer = new BM25Scorer(idfs, queryDict);
+        } else if (scoreType.equals("window")) {
+            scorer = new SmallestWindowScorer(idfs);
+        } else if (scoreType.equals("extra")) {
+            scorer = new ExtraCreditScorer(idfs);
+        }
+
         // score documents for queries
-        Map<Query, List<String>> queryRankings = score(queryDict, scoreType, idfs);
+        Map<Query, List<String>> queryRankings = score(queryDict, scorer, idfs);
 
-        //print results and save them to file
-//		String outputFilePath =  null;
-//		writeRankedResultsToFile(queryRankings,outputFilePath);
-
-        //print results
+        // print results
         printRankedResults(queryRankings);
     }
 }
