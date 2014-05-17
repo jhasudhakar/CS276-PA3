@@ -51,14 +51,14 @@ public class ConfigLoader {
             String line;
             /* Process one line at a time. */
             while ((line = br.readLine()) != null) {
-                int indexPeriod = line.indexOf('#');
+                int indexPound = line.indexOf('#');
                 int indexEqual = line.indexOf('=');
                 double value = Double.parseDouble(line.substring(indexEqual + 1));
-                if (indexPeriod != -1) {
-                    // If token[0] contains '.' like in "Wf.url".
+                if (indexPound != -1) {
+                    // If token[0] contains '#' like in "Wf#url".
                     try {
-                        String fieldName = line.substring(0, indexPeriod);
-                        String key = line.substring(indexPeriod + 1, indexEqual);
+                        String fieldName = line.substring(0, indexPound);
+                        String key = line.substring(indexPound + 1, indexEqual);
                         // Access a specific field
                         Field field = stringFieldMap.get(fieldName);
                         field.setAccessible(true);

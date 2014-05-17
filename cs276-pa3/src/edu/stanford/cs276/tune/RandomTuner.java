@@ -151,9 +151,16 @@ public class RandomTuner {
                 return;
             }
 
+            boolean normalize = false;
+            String objFile = args[0];
+            if (args.length > 1 && args[0].equals("-n")) {
+                normalize = true;
+                objFile = args[1];
+            }
+
             List<Pair<Map<String, Double>, Double>> goodConfigs =
                     (List<Pair<Map<String, Double>, Double>>)
-                            SerializationHelper.loadObjectFromFile(args[0]);
+                            SerializationHelper.loadObjectFromFile(objFile);
 
             List<String> orderedKeys = null;
             if (goodConfigs.size() > 0) {
@@ -185,12 +192,19 @@ public class RandomTuner {
                 return -p1.getSecond().compareTo(p2.getSecond());
             });
 
+            String firstKey = orderedKeys.get(0);
             for (Pair<Map<String, Double>, Double> config : goodConfigs) {
                 System.out.print(String.format("%.4f\t", config.getSecond()));
 
                 Map<String, Double> params = config.getFirst();
                 for (String key : orderedKeys) {
-                    System.out.print(String.format("%.4f\t", params.get(key)));
+                    double value = params.get(key);
+
+                    if (normalize) {
+                        value /= params.get(firstKey);
+                    }
+
+                    System.out.print(String.format("%.4f\t", value));
                 }
                 System.out.println();
             }
