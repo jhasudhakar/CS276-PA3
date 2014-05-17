@@ -1,5 +1,6 @@
-package edu.stanford.cs276;
+package edu.stanford.cs276.tune;
 
+import edu.stanford.cs276.*;
 import edu.stanford.cs276.scorer.AScorer;
 import edu.stanford.cs276.scorer.BM25Scorer;
 import edu.stanford.cs276.util.Config;
