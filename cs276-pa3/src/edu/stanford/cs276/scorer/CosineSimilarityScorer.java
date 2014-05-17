@@ -14,16 +14,16 @@ import static edu.stanford.cs276.util.Config.setParameters;
 public class CosineSimilarityScorer extends AScorer
 {
     private static double SMOOTH_BODY_LENGTH = 500;
-    private static Map<DocField, Double> fieldWeights;
+    private static Map<DocField, Double> C;
     final private static String CONFIG = "cosine.config";
 
     static {
-        fieldWeights = new HashMap<>();
-        fieldWeights.put(DocField.url, 1.0);
-        fieldWeights.put(DocField.title, 1.0);
-        fieldWeights.put(DocField.header, 1.0);
-        fieldWeights.put(DocField.body, 1.0);
-        fieldWeights.put(DocField.anchor, 1.0);
+        C = new HashMap<>();
+        C.put(DocField.url, 1.0);
+        C.put(DocField.title, 1.0);
+        C.put(DocField.header, 1.0);
+        C.put(DocField.body, 1.0);
+        C.put(DocField.anchor, 1.0);
     }
 
     public CosineSimilarityScorer(IDF idfs) {
@@ -53,7 +53,7 @@ public class CosineSimilarityScorer extends AScorer
         double score = 0.0;
 
         for (DocField docField : DocField.values()) {
-            score += fieldWeights.get(docField) * dotProduct(tfQuery, tfs.get(docField));
+            score += C.get(docField) * dotProduct(tfQuery, tfs.get(docField));
         }
 
         //System.out.println(q);

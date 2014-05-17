@@ -12,11 +12,11 @@ public class CosineTuningConfig implements TuningConfig {
     protected CosineTuningConfig() {
         paramRanges = new HashMap<>();
 
-        paramRanges.put("fieldWeights#anchor", new double[]{0.0, 5.0});
-        paramRanges.put("fieldWeights#body", new double[]{0.0, 5.0});
-        paramRanges.put("fieldWeights#header", new double[]{0.0, 5.0});
-        paramRanges.put("fieldWeights#title", new double[]{0.0, 5.0});
-        paramRanges.put("fieldWeights#url", new double[]{0.0, 5.0});
+        paramRanges.put("C#anchor", new double[]{0.0, 5.0});
+        paramRanges.put("C#body", new double[]{0.0, 5.0});
+        paramRanges.put("C#header", new double[]{0.0, 5.0});
+        paramRanges.put("C#title", new double[]{0.0, 5.0});
+        paramRanges.put("C#url", new double[]{0.0, 5.0});
     }
 
     @Override
@@ -26,12 +26,12 @@ public class CosineTuningConfig implements TuningConfig {
 
     @Override
     public double getNDCGThreshold() {
-        return 0.85;
+        return 0.865;
     }
 
     @Override
     public double getNDCGThresholdEx() {
-        return 0.87;
+        return 0.8675;
     }
 
     @Override
