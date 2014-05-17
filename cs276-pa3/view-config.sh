@@ -5,4 +5,4 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-java -Xmx1024m -cp out/production/cs276-pa3 edu.stanford.cs276.tune.BM25Tuner\$ResultViewer $1
+java -Xmx1024m -cp out/production/cs276-pa3 edu.stanford.cs276.tune.RandomTuner\$ResultViewer $1
