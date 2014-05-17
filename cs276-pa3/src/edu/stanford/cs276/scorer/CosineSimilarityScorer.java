@@ -9,7 +9,7 @@ import edu.stanford.cs276.util.MapUtility;
 import java.util.HashMap;
 import java.util.Map;
 
-import static edu.stanford.cs276.util.Config.setParameters;
+import static edu.stanford.cs276.util.ConfigLoader.setParameters;
 
 public class CosineSimilarityScorer extends AScorer
 {

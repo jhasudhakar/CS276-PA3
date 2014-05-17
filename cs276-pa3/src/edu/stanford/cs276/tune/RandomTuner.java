@@ -4,7 +4,7 @@ import edu.stanford.cs276.*;
 import edu.stanford.cs276.scorer.AScorer;
 import edu.stanford.cs276.scorer.BM25Scorer;
 import edu.stanford.cs276.scorer.CosineSimilarityScorer;
-import edu.stanford.cs276.util.Config;
+import edu.stanford.cs276.util.ConfigLoader;
 import edu.stanford.cs276.util.Pair;
 import edu.stanford.cs276.util.SerializationHelper;
 
@@ -111,7 +111,7 @@ public class RandomTuner {
 
             // load custom config
             StringReader stringReader = new StringReader(configString);
-            Config.setParameters(scorer, stringReader);
+            ConfigLoader.setParameters(scorer, stringReader);
 
             // score documents for queries
             Map<Query, List<String>> queryRankings = Rank.score(queryDict, scorer, idfs);

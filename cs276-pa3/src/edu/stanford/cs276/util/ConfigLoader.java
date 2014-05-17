@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by weiwei on 5/12/14.
  */
-public class Config {
+public class ConfigLoader {
     public static void setParameters(AScorer scorer, String fileName) {
         File file = new File(fileName);
         try {

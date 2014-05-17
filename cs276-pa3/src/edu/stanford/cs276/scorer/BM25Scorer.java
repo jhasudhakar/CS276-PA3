@@ -9,7 +9,7 @@ import edu.stanford.cs276.util.MapUtility;
 import java.util.*;
 import java.util.function.Function;
 
-import static edu.stanford.cs276.util.Config.setParameters;
+import static edu.stanford.cs276.util.ConfigLoader.setParameters;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
