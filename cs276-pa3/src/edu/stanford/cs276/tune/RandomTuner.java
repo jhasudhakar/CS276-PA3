@@ -3,6 +3,7 @@ package edu.stanford.cs276.tune;
 import edu.stanford.cs276.*;
 import edu.stanford.cs276.scorer.AScorer;
 import edu.stanford.cs276.scorer.BM25Scorer;
+import edu.stanford.cs276.scorer.CosineSimilarityScorer;
 import edu.stanford.cs276.util.Config;
 import edu.stanford.cs276.util.Pair;
 import edu.stanford.cs276.util.SerializationHelper;
@@ -44,18 +45,23 @@ public class RandomTuner {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
-            System.err.println("Insufficient number of arguments: <bm25> <signal file> <rel file>");
+            System.err.println("Insufficient number of arguments: <bm25|cosine> <signal file> <rel file>");
             return;
         }
 
         TuningConfig tuningConfig = null;
-        if (args[0].equals("bm25")) {
+        String scorerID = args[0];
+        if (scorerID.equals("bm25")) {
             tuningConfig = new BM25TuningConfig();
+        } else if (scorerID.equals("cosine")) {
+            tuningConfig = new CosineTuningConfig();
         } else {
-            throw new IllegalArgumentException("Unknown scorer specifier: " + args[0]);
+            throw new IllegalArgumentException("Unknown scorer specifier: " + scorerID);
         }
 
-        List<Pair<Map<String, Double>, Double>> goodConfigs = new ArrayList<>();
+        // make it synchronized as it'll be accessed by more than one thread
+        List<Pair<Map<String, Double>, Double>> goodConfigs =
+                Collections.synchronizedList(new ArrayList<>());
         final String resultFormatString = tuningConfig.getResultFormatString();
 
         // save good config upon shutdown
@@ -78,7 +84,12 @@ public class RandomTuner {
         Map<Query, Map<String, Document>> queryDict = LoadHandler.loadTrainData(args[1]);
 
         // create scorer
-        AScorer scorer = new BM25Scorer(idfs, queryDict);
+        AScorer scorer = null;
+        if (scorerID.equals("bm25")) {
+            scorer = new BM25Scorer(idfs, queryDict);
+        } else if (scorerID.equals("cosine")) {
+            scorer = new CosineSimilarityScorer(idfs);
+        }
 
         Set<String> uniqeConfigs = new HashSet<>();
 
