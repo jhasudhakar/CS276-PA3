@@ -26,7 +26,7 @@ public class CosineTuningConfig implements TuningConfig {
 
     @Override
     public double getNDCGThreshold() {
-        return 0.865;
+        return 0.867;
     }
 
     @Override
