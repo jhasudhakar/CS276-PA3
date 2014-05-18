@@ -101,7 +101,7 @@ In Hill Climbing algorithm, we define the neighbors of a candidate to be as foll
 
 \section{Task 3 - Smallest Window}
 
-Parameters and NDCG of train and dev datasets:
+Our smallest window scorer is based on cosine similarity scorer. Parameters and NDCG of train and dev datasets:
 
 \begin{table}[!htb]
     \centering
@@ -119,7 +119,45 @@ Parameters and NDCG of train and dev datasets:
     \caption{Parameters for Task 3}
 \end{table}
 
-\textbf{Tuning Strategy}
+\textbf{Tuning Strategy} We applied a tuning strategy similar to that used in tunining cosine similarity scorer. The preliminary result showed that, with different parameter configuration, the overall improvement is not so obvious. As a result, we fix $c_*$ parameters from cosine similarity scorer and took effort to tune parameter $B$.
+
+We used three different boost functions ($\frac{1}{x}$, $\frac{1}{x^2}$ and $e^{-x}$) and tried $B$ in range $[1.0, 10.0]$ with step $0.01$. The result is plotted as follows:
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.3333\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{sw.pdf}
+      \caption{Gain of NDCG with $\frac{1}{x}$}
+      \label{fig:diff-inverse}
+  \end{subfigure}%
+  \begin{subfigure}{.3333\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{sw-square.pdf}
+      \caption{Gain of NDCG with $\frac{1}{x^2}$}
+      \label{fig:diff-square}
+  \end{subfigure}%
+  \begin{subfigure}{.3333\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{sw-exp.pdf}
+      \caption{Gain of NDCG with $e^{-x}$}
+      \label{fig:diff-exp}
+  \end{subfigure}
+  \caption{Tuning $B$}
+  \label{fig:tune-b}
+\end{figure}
+
+In each plot, the x-axis is value of $B$ and the y-axis is the difference from NDCG values achieved in cosine similarity scorer achieved in Task 1. We can see that with whichever boost function and $B<5$, we can gain a improvement of NDCG on both train and dev sets. However, different behaviors emerge with different boost functions with $B<5$:
+
+\begin{itemize}
+    \item With $\frac{1}{x}$, the trend of NDCG gain is generally similar for both sets. Moreover, there're local maxima for both train and test sets at $B\approx 2.6$ and $B\approx 4.6$.
+    \item With $\frac{1}{x^2}$, there's no coherent trend for the two sets. While NDCG for train set keeps a gain of $0.02$+, the gain for test set is generally decreasing.
+    \item With $e^{-x}$, the NDCG gain for train set is the best of the three functions, with a maximum over 0.03. At $B\approx 4.6$, both sets get a local maximum gain. However, the gain for dev set is not as good as that of $\frac{1}{x}$'s.
+\end{itemize}
+
+As a result, we chose $\frac{1}{x}$ as the boost function and $B=2.65$ as the parameter.
+
+\textbf{Reasons behind the Parameters} The argument for $c_*$ is similar to that in Task 1. For $B$, intuitively, it should not be too large as it serves only as a boost factor and the smallest window is not a very good indicator of relevance. The figures confirm this with extra large $B$ hurting performance. But for small B, there's really not a big difference. For $\frac{1}{x}$, it turns out that several values of $B$ can achieve a similar boost so our choice here is just a result of data.
 
 \section{Q\&A}
 
@@ -148,8 +186,5 @@ In BM25F, why did you select a particular $V_j$ function?
 For a function that includes the smallest window as one component, how does varying $B$ and the boost function change the performance of the ranking algorithm?
 
 \paragraph{Solution 5}
-
-
-\section{Extra Credit}
 
 \end{document}

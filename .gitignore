@@ -5,6 +5,8 @@ out/
 output/
 *.pdf
 
+!/sw*.pdf
+
 .*.sw[p-z]
 .DS_Store
 
