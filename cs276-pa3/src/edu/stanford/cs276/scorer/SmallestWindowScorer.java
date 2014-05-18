@@ -7,7 +7,7 @@ import edu.stanford.cs276.Query;
 import java.util.HashSet;
 
 public class SmallestWindowScorer extends CosineSimilarityScorer {
-    private double B = 2.0;
+    private double B = 2.65;
 
     public SmallestWindowScorer(IDF idfs) {
         super(idfs);
