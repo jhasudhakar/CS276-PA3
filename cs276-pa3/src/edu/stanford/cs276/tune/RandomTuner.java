@@ -4,6 +4,7 @@ import edu.stanford.cs276.*;
 import edu.stanford.cs276.scorer.AScorer;
 import edu.stanford.cs276.scorer.BM25Scorer;
 import edu.stanford.cs276.scorer.CosineSimilarityScorer;
+import edu.stanford.cs276.scorer.SmallestWindowScorer;
 import edu.stanford.cs276.util.ConfigLoader;
 import edu.stanford.cs276.util.Pair;
 import edu.stanford.cs276.util.SerializationHelper;
@@ -45,7 +46,7 @@ public class RandomTuner {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
-            System.err.println("Insufficient number of arguments: <bm25|cosine> <signal file> <rel file>");
+            System.err.println("Insufficient number of arguments: <bm25|cosine|sw> <signal file> <rel file>");
             return;
         }
 
@@ -55,6 +56,8 @@ public class RandomTuner {
             tuningConfig = new BM25TuningConfig();
         } else if (scorerID.equals("cosine")) {
             tuningConfig = new CosineTuningConfig();
+        } else if (scorerID.equals("sw")) {
+            tuningConfig = new SWTuningConfig();
         } else {
             throw new IllegalArgumentException("Unknown scorer specifier: " + scorerID);
         }
@@ -89,6 +92,8 @@ public class RandomTuner {
             scorer = new BM25Scorer(idfs, queryDict);
         } else if (scorerID.equals("cosine")) {
             scorer = new CosineSimilarityScorer(idfs);
+        } else if (scorerID.equals("sw")) {
+            scorer = new SmallestWindowScorer(idfs);
         }
 
         Set<String> uniqeConfigs = new HashSet<>();
