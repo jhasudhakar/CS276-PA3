@@ -41,6 +41,51 @@
 
 \section{Task 2 - BM25F}
 
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{ | l | l | l | l | l | l |}
+    \hline
+    \textbf{Param} & $B_{anchor}$ & $B_{body}$ & $B_{header}$ & $B_{title}$ & $B_{url}$ \\
+    \hline
+    \textbf{Value} & 0.20 & 1.00 & 0.50 & 0.90 & 1.00 \\
+    \hline
+    \textbf{Param} & $W_{anchor}$ & $W_{body}$ & $W_{header}$ & $W_{title}$ & $W_{url}$ \\
+    \hline
+    \textbf{Value} & 1.60 & 0.10 & 1.60 & 3.10 & 3.00 \\
+    \hline
+    \textbf{Param} & $K1$ & $\lambda$ & $\lambda'$ & \multicolumn{2}{c|}{} \\
+    \hline
+    \textbf{Value} & 1.00 & 3.19 & 4.40 & \multicolumn{2}{c|}{}\\
+    \hline
+    $\mathbf{NDCG_{train}}$ & \multicolumn{5}{c|}{0.8919} \\
+    \hline
+    $\mathbf{NDCG_{dev}}$ & \multicolumn{5}{c|}{0.8829} \\
+    \hline
+  \end{tabular}
+  \caption{Parameters for Task 2}
+\end{table}
+
+\subsection{Tuning Strategy}
+
+We use local hill climbing with random restart to tune the parameter. To achieve good performance on both training data set and dev data set, we manually adjust the parameter we get from local hill climbing tuning algorithm.
+
+In Hill Climbing algorithm, we define the neighbors of a candidate to be as follows:
+\begin{itemize}
+  \item First select a parameter type to tune. Get the range of that parameter.
+  \item Then generate candidates with other parameters unchanged, only changes that parameter's value.
+\end{itemize}
+
+\subsection{Reasonings behind the Weights}
+
+\begin{itemize}
+  \item \textbf{url:} $W_{url}$ is $3.0$ which is the second largest (only a little smaller than $W_{title}$). Url has large weights makes sense becuase url often contains crucial information about this page. In fact, when I evaluated the query relevance myself, I found that url is very can tell us a lot about what this page is about. $Bf_{url}$ is $1.0$. It also makes sense because for these two urls \url{http://nlp.stanford.edu/manning/tex/} and \url{http://nlp.stanford.edu/manning/tex/avm.sty} and the query is \textit{christopher manning latex macros}, the former urls is shorter than the latter while the former contains all the key word of the latter. The latter may be more specific and contains less information of our information need.
+  \item \textbf{title:} $W_{title}$ is $3.1$ which is the largest. Title has the largest weight is reasonable becuase title summarizes the contents of a web document. $Bf_{title}$ is $0.9$. It is reasonable because longer title may contain more specific information about a specific event. For example, our query is \textit{ wilbur dining}, there are a page whose title is \textit{when logging into webmail a no authentication error message displays stanford answers} and another page whose title is \textit{http://answers.stanford.edu/category/email-and-calendar/webmail}. The latter provides a better answer for user's information need because the former contains authentication error which the user didn't want to know.
+  \item \textbf{body:} $W_{body}$ is only $0.1$ which is the lowest. Body is very long and may cover a lot of words in the query. The weight is low because term frequency in body is very high and we don't want body to be the most important factor in scoring documents. $Bf_{body}$ is $1.0$ and it is reasonable because if one document has long body length but has the same body hits as a shorter document, the shorter document tends to be more relevant than the longer document.
+  \item \textbf{header:} $W_{header}$ is $1.6$ which has the same weight as anchor but much smaller than title and url. Header often suggests the content overview of a paragraph. Some paragraph may not be related to user's information need so the total weight given to header is not that high as title and url. $Bf_header$ is $0.5$.
+  \item \textbf{anchor:} $W_{anchor}$ is $1.6$. Anchor text tells us a lot but anchor count is often very large and the anchor in other website may not summarizes the core idea of the web document so the weight is not that high as title and url but it is much more important than body. $Bf_{anchor}$ is 0.2 which suggests that the length of the anchor text is not very important to the query relevance. The length of anchor text varies a lot: some anchor has a very large count so that the lenght of anchor text is very long. We don't want these to affect the scoring of our BM25F scorer so the value is only 0.2.
+\end{itemize}
+
+
 \section{Task 3 - Smallest Window}
 
 \section{Q\&A}
