@@ -19,11 +19,11 @@ public class CosineSimilarityScorer extends AScorer
 
     static {
         C = new HashMap<>();
-        C.put(DocField.url, 1.0);
-        C.put(DocField.title, 1.0);
-        C.put(DocField.header, 1.0);
-        C.put(DocField.body, 1.0);
         C.put(DocField.anchor, 1.0);
+        C.put(DocField.body, 3.19);
+        C.put(DocField.header, 4.40);
+        C.put(DocField.title, 4.35);
+        C.put(DocField.url, 4.30);
     }
 
     public CosineSimilarityScorer(IDF idfs) {

@@ -25,10 +25,13 @@
 
 \section{Task 1 - Cosine Similarity}
 
-\begin{center}
+Parameters and NDCG of train and dev datasets:
+
+\begin{table}[!htb]
+    \centering
     \begin{tabular}{ | l | l | l | l | l | l |}
     \hline
-    \textbf{Param} & $c_a$ & $c_b$ & $c_h$ & $c_t$ & $c_u$ \\
+    \textbf{Param} & $c_{anchor}$ & $c_{body}$ & $c_{header}$ & $c_{title}$ & $c_{url}$ \\
     \hline
     \textbf{Value} & 1.00 & 3.19 & 4.40 & 4.35 & 4.30 \\
     \hline
@@ -37,7 +40,19 @@
     $\mathbf{NDCG_{dev}}$ & \multicolumn{5}{c|}{0.8508} \\
     \hline
     \end{tabular}
-\end{center}
+    \caption{Parameters for Task 1}
+\end{table}
+
+\textbf{Tuning Strategy} Initially we randomly select value from $[0,5]$ for each parameter and compute NDCG train and dev set respectively\footnote{See \texttt{RandomTuner.java}.}. After normalizing the values by $c_{anchor}$, We found that with $c_{anchor}= 1.00, c_{body}\approx 1.60, c_{head}\approx 3.60, c_{title}\approx4.30, c_{url}\approx4.60$, NDCG $> 0.8670$ can be achieved on train set. On the other hand, with $c_{anchor}= 1.00, c_{body}\approx 3.40, c_{head}\approx 3.60, c_{title}\approx4.80, c_{url}\approx4.60$, NDCG $> 0.8515$ can be achieve on dev set. Then we narrow down the range for each parameter and manually tuned the paramters to get satisfactory NDCG on both sets. The final parameter value and result is in the table above.
+
+\textbf{Intuition for Parameters} First, the weights for header, title and url fields are larger than that of body. This aligns with intuition because header and title contains summary information of the document. When a query term appearing in header or title, it is highly likely that the document is relevant to the query. The reasoning for url is similar. This is the same reason why human readable url is good for SEO. Second, it might be strange that anchor weight is the lowest at a first look. This is actually the result of multiplying by the anchor count -- raw term frequency is anchor field tends to be larger than term frequency in other fields.
+
+We made the following design choices in cosine scorer:
+
+\begin{itemize}
+    \item We use body\_length + 500 to do length normalization. The actual value of added length doesn't seem to matter so much so we stick to 500 as suggested.
+    \item Sublinear scaling is \emph{NOT} used on raw document term frequencies as it turns out with sublinear scaling the performance degrades.
+\end{itemize}
 
 \section{Task 2 - BM25F}
 
