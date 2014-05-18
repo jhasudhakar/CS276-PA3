@@ -21,10 +21,12 @@ public class SmallestWindowScorer extends CosineSimilarityScorer {
     private double getBoost(Document d, Query q) {
         HashSet<String> termSet = new HashSet<>(q.getQueryWords());
         int smallestWindow = d.getSmallestWindow(termSet);
-        return discount(smallestWindow == -1 ? Double.POSITIVE_INFINITY : smallestWindow, termSet.size());
+        return discount(B, smallestWindow == -1 ? Double.POSITIVE_INFINITY : smallestWindow, termSet.size());
     }
 
-    private double discount(double smallestWindow, int Q) {
+    protected double discount(double B, double smallestWindow, int Q) {
         return 1.0 + (B - 1.0) / (smallestWindow - Q + 1);
+        //return 1.0 + (B - 1.0) / Math.pow(smallestWindow - Q + 1, 2);
+        //return 1.0 + (B - 1.0) * Math.pow(Math.E, Q - smallestWindow);
     }
 }

@@ -13,6 +13,7 @@ output/
 
 tmp/
 
+*.dat
 data/
 2013.data/
 cs276-pa3/bin
