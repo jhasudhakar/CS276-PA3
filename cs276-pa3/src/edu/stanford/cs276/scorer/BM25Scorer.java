@@ -18,25 +18,25 @@ public class BM25Scorer extends AScorer {
     private final static String CONFIG = "bm25.config";
     private static Map<DocField, Double> Bf;
     private static Map<DocField, Double> Wf;
-    private double K1 = 1.0;
-    private double lambda = 1.0;
-    private double lambdaPrime = 1.0;
+    private double K1 = 2.5;
+    private double lambda = 1.6;
+    private double lambdaPrime = 2.1;
 
     // initialize weights
     static {
         Bf = new HashMap<>();
         Bf.put(DocField.url, 1.0);
-        Bf.put(DocField.title, 1.0);
-        Bf.put(DocField.header, 1.0);
+        Bf.put(DocField.title, 0.9);
+        Bf.put(DocField.header, 0.5);
         Bf.put(DocField.body, 1.0);
-        Bf.put(DocField.anchor, 1.0);
+        Bf.put(DocField.anchor, 0.2);
 
         Wf = new HashMap<>();
-        Wf.put(DocField.url, 1.0);
-        Wf.put(DocField.title, 1.0);
-        Wf.put(DocField.header, 1.0);
-        Wf.put(DocField.body, 1.0);
-        Wf.put(DocField.anchor, 1.0);
+        Wf.put(DocField.url, 3.0);
+        Wf.put(DocField.title, 3.1);
+        Wf.put(DocField.header, 1.6);
+        Wf.put(DocField.body, 0.1);
+        Wf.put(DocField.anchor, 1.6);
     }
 
     // instance variables
