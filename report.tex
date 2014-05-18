@@ -105,6 +105,33 @@ In Hill Climbing algorithm, we define the neighbors of a candidate to be as foll
 
 \section{Q\&A}
 
+\paragraph{Question 1}
+What was the reasoning behind giving the weights to the url, title, body, header and anchor fields for the three tasks? Were there any particular properties about the documents that allowed a higher weight to be given to one field as opposed to another?
+
+\paragraph{Question 2}
+What other metrics, not used in this assignment, could be used to get a better scoring function from the document? The metrics could either be static (query-independent, e.g. document length) or dynamic (query-dependent, e.g. smallest window).
+
+\paragraph{Solution 2}
+Static metrics such as time of creation may help to achieve a better scoring function from the document. Sometimes we may type in a time in the query string to find an article, time of creation may help a lot if we include time in the metric.
+
+Dynamic metrics like user interests, author, location may help too. User interests is a very import feature. If I type in Jordan, and I search AI a lot, the search engine should return Jordan in UC Berkeley. Author may also be helpful because if we want to find Andrew Ng's paper, including author in the metric may help us find better result. Location is becoming more and more important. If I type in restaurant, it is better to return restaurant near your location.
+
+\paragraph{Question 3}
+In BM25F, in addition to the weights given to the fields, there are 8 other parameters, $B_{url}$, $B_{title}$, $B_{header}$, $B_{body}$, $B_{anchor}$, $\lambda$, $\lambda'$ and $K_1$. How do these parameters affect the ranking function?
+
+\paragraph{Solution 3}
+
+\paragraph{Question 4}
+In BM25F, why did you select a particular $V_j$ function?
+
+\paragraph{Solution 4}
+
+\paragraph{Question 5}
+For a function that includes the smallest window as one component, how does varying $B$ and the boost function change the performance of the ranking algorithm?
+
+\paragraph{Solution 5}
+
+
 \section{Extra Credit}
 
 \end{document}
