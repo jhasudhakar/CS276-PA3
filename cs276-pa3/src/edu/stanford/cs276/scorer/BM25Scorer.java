@@ -53,7 +53,7 @@ public class BM25Scorer extends AScorer {
         super(idfs);
 
         /* Read in config file and set parameters. */
-        setParameters(this, CONFIG);
+        setParameters(this, BM25Scorer.class, CONFIG);
 
         this.queryDict = queryDict;
 

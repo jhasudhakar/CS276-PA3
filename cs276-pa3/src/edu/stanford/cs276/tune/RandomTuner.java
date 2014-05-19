@@ -116,7 +116,7 @@ public class RandomTuner {
 
             // load custom config
             StringReader stringReader = new StringReader(configString);
-            ConfigLoader.setParameters(scorer, stringReader);
+            ConfigLoader.setParameters(scorer, scorer.getClass(), stringReader);
 
             // score documents for queries
             Map<Query, List<String>> queryRankings = Rank.score(queryDict, scorer, idfs);

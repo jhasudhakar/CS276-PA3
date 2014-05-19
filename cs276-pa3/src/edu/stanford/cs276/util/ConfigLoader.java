@@ -13,10 +13,10 @@ import java.util.Map;
  * Created by weiwei on 5/12/14.
  */
 public class ConfigLoader {
-    public static void setParameters(AScorer scorer, String fileName) {
+    public static void setParameters(AScorer scorer, Class<?> clazz, String fileName) {
         File file = new File(fileName);
         try {
-            setParameters(scorer, new FileReader(file));
+            setParameters(scorer, clazz, new FileReader(file));
         } catch (FileNotFoundException e) {
             // let it go
             // the user is too lazy to provide a config file
@@ -24,10 +24,10 @@ public class ConfigLoader {
         }
     }
 
-    public static void setParameters(AScorer scorer, Reader reader) {
+    public static void setParameters(AScorer scorer, Class<?> clazz, Reader reader) {
         BufferedReader br = new BufferedReader(reader);
 
-        Field[] fields = scorer.getClass().getDeclaredFields();
+        Field[] fields = clazz.getDeclaredFields();
         /* String -> DocField. */
         Map<String, DocField> stringDocFieldMap = new HashMap<>();
         for (DocField docfield : DocField.values()) {

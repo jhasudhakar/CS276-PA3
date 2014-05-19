@@ -125,7 +125,7 @@ public class HillClimbingTuner {
                 }
                 StringReader stringReader;
                 stringReader = new StringReader(readableConfig(c));
-                ConfigLoader.setParameters(scorer, stringReader);
+                ConfigLoader.setParameters(scorer, BM25Scorer.class, stringReader);
                 // Score documents.
                 Map<Query, List<String>> queryRankings = Rank.score(queryDict, scorer, idfs);
                 // Evaluate results.

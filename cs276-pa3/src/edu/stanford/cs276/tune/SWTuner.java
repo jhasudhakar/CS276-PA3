@@ -61,7 +61,7 @@ public class SWTuner {
 
             // load custom config
             StringReader stringReader = new StringReader(configString);
-            ConfigLoader.setParameters(scorer, stringReader);
+            ConfigLoader.setParameters(scorer, SmallestWindowScorer.class, stringReader);
 
             // score documents for queries
             Map<Query, List<String>> queryRankings = Rank.score(queryDict, scorer, idfs);

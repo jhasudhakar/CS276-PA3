@@ -4,6 +4,7 @@ import edu.stanford.cs276.Document;
 import edu.stanford.cs276.IDF;
 import edu.stanford.cs276.Query;
 import edu.stanford.cs276.doc.DocField;
+import edu.stanford.cs276.util.ConfigLoader;
 import edu.stanford.cs276.util.MapUtility;
 
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class CosineSimilarityScorer extends AScorer
     public CosineSimilarityScorer(IDF idfs) {
         super(idfs);
 
-        //setParameters(this, CONFIG);
+        ConfigLoader.setParameters(this, CosineSimilarityScorer.class, CONFIG);
     }
 
     /**
